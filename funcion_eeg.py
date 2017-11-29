@@ -78,7 +78,7 @@ def eeg2(signal, canales, sampling_rate, labels = None, show=True):
     b, a = st.get_filter(ftype='butter',
                          band='highpass',
                          order=8,
-                         frequency=4,
+                         frequency=0.1,
                          sampling_rate=sampling_rate)
     
     aux, _ = st._filter_signal(b, a, signal=signal, check_phase=True, axis=0)

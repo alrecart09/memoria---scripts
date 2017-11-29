@@ -6,7 +6,7 @@ Created on Wed Nov 15 21:41:29 2017
 @author: antonialarranaga
 """
 import numpy as np
-from scipy.signal import welch
+from scipy.signal import welch, coherence
 from scipy import interpolate, integrate
 from scipy.stats import stats
 import funciones as fn
@@ -16,7 +16,13 @@ from biosppy import tools as st
 from biosppy import ecg as ecg_
 from peakdetect import peakdetect
 import pandas as pd
+import pywt
+import mod_filtros as filtro
+from sklearn.preprocessing import StandardScaler
+
 #sacar caracteristicas de señales
+
+#filtro
 
 
 #ccs generales:
@@ -68,11 +74,34 @@ def get_slope(data, time, show = False): #se hace regresion lineal a los datos, 
     return slope
 
 def get_powerSpect(data, fs):
-    frequency, power = welch(data, fs)
+    frequency, power = welch(data, fs, nperseg= data.size/3)
     return frequency, power
 
+def obtener_bandaf(fc1, fc2, power, frequency):
+    power_ = []
+    freq = []
+    fp = np.column_stack([frequency, power])
+    #magnitud vs freq
+    i1=0
+    i2 = 0
+    fc1 = fn.takeClosest(frequency, fc1)
+    fc2 = fn.takeClosest(frequency, fc2)
+    for index, elemento in enumerate(fp):
+        if elemento[0] == fc1:
+            i1 = index
+           
+            break
+    for index, elemento in enumerate(fp):
+        if elemento[0] == fc2:
+            i2 = index
+            
+            break
+    power_ = power[i1: i2]
+    freq = frequency[i1: i2]
+    return power_, freq
+
 #eyeTracker
-def diametroPupila(eyeTracker, show = False):
+def diametroPupila_(eyeTracker, show = False):
     
     fs = 120 #hz
     #recuperar datos importantes del df
@@ -83,7 +112,7 @@ def diametroPupila(eyeTracker, show = False):
     
     #timestamps = fn.timeStampEyeTracker(eyeTracker) #lento
     
-    datosSacadas = eyeTracker['GazeEventType'] #tienen duracion o son solo esa muestra? cm es?
+    datosSacadas = eyeTracker['GazeEventType']
     
     #recuperar datos pupila mas confiable
     diametroPupila = []
@@ -121,9 +150,9 @@ def diametroPupila(eyeTracker, show = False):
     pupila_sinNAN = diametroPupila[~indicesNAN]
     tiempo_sinNAN = tiempo[~indicesNAN]
     
-    if len(pupila_sinNAN) == 0 or indicesNAN > len(diametroPupila)*0.8: # - poner un umbral para que sea valida medida
-        print('no existe info pupila')
-        return np.nan
+    if len(pupila_sinNAN) == 0 or np.abs(len(pupila_sinNAN) - len(diametroPupila)) > len(diametroPupila)*0.5: # - poner un umbral para que sea valida medida
+        #print('no existe info pupila ' + str(np.abs(len(pupila_sinNAN) - len(diametroPupila))))
+        return [np.nan], 0
     
     
     
@@ -132,7 +161,7 @@ def diametroPupila(eyeTracker, show = False):
     pupila_interpolada = f_inter(tpo)
     
     order = int(0.3 * fs)
-    pupila_filtrada, _, _ = st.filter_signal(signal=pupila_interpolada,
+    pupila_filtrada, _, _ = filtro.filter_signal2(signal=pupila_interpolada,
                                       ftype='FIR',
                                       band='lowpass',
                                       order=order,
@@ -199,28 +228,7 @@ def num_sacadasFijaciones(eyeTracker):
             
     
 #ECG
-def obtener_bandaf_ECG(fc1, fc2, power, frequency):
-    power_ = []
-    freq = []
-    fp = np.column_stack([frequency, power])
-    #magnitud vs freq
-    i1=0
-    i2 = 0
-    fc1 = fn.takeClosest(frequency, fc1)
-    fc2 = fn.takeClosest(frequency, fc2)
-    for index, elemento in enumerate(fp):
-        if elemento[0] == fc1:
-            i1 = index
-           
-            break
-    for index, elemento in enumerate(fp):
-        if elemento[0] == fc2:
-            i2 = index
-            
-            break
-    power_ = power[i1: i2]
-    freq = frequency[i1: i2]
-    return power_, freq
+
 
 def hrv_ccst(tiempo_peaks, amplitud_peaks): #dependen del tpo de la ventana - ver cuales sirven?
     #ademas se calculan ccs de HRV - revisar con cuales quedarse según papers
@@ -239,28 +247,35 @@ def hrv_ccst(tiempo_peaks, amplitud_peaks): #dependen del tpo de la ventana - ve
     peak_HF
     IBI
     -------
-    HR se obtiene de preprocesamiento
+    
     '''
-
+    if len(amplitud_peaks) == 0:
+        return np.nan, np.nan, np.nan, np.nan
+    
     IBI = [y - x for x,y in zip(tiempo_peaks,tiempo_peaks[1:])] #inter beat interval[ms]
     
-    f_inter = interpolate.interp1d(tiempo_peaks, amplitud_peaks, kind = 'cubic') #tipo de interpolación
-    xx = np.linspace(tiempo_peaks[0], tiempo_peaks[tiempo_peaks.size-1], 5000)
-    yy = f_inter(xx)
-    frequency, power = welch(yy, (xx[1]-xx[0])/1000) #/1000 para que este en [segundos] y freq en [Hz] - power en 
+    #f_inter = interpolate.interp1d(tiempo_peaks, amplitud_peaks, kind = 'cubic') #tipo de interpolación
+    #xx = np.linspace(tiempo_peaks[0], tiempo_peaks[tiempo_peaks.size-1], 5000)
+    #yy = f_inter(xx)
+    #frequency, power = welch(yy, (xx[1]-xx[0])/1000) #/1000 para que este en [segundos] y freq en [Hz] - power en 
       
     #Caracteristicas de HRV - revisar si es asi el concepto con IBI? o con tiempo_peaks
     dif = [np.abs(y - x) for x,y in zip(IBI,IBI[1:])]
-    a = sum(y - x > 50 for x,y in zip(IBI,IBI[1:]))
-    power_vlf, frequency_vlf = obtener_bandaf_ECG(0.003, 0.04, power, frequency)
-    power_lf, frequency_lf = obtener_bandaf_ECG(0.04, 0.15, power, frequency)
-    power_hf, frequency_hf = obtener_bandaf_ECG(0.15,0.4, power, frequency)
+    #a = sum(y - x > 50 for x,y in zip(IBI,IBI[1:]))
+    #power_vlf, frequency_vlf = obtener_bandaf_ECG(0.003, 0.04, power, frequency)
+    #power_lf, frequency_lf = obtener_bandaf_ECG(0.04, 0.15, power, frequency)
+    #power_hf, frequency_hf = obtener_bandaf_ECG(0.15,0.4, power, frequency)
+    
+    if len(IBI) == 0:
+        return np.nan, np.nan, np.nan, np.nan
+    if len(IBI) == 1:
+        return np.mean(IBI), np.std(IBI), 0, IBI
     
     ##temporales
     AVNN = np.mean(IBI)
     SDNN = np.std(IBI)
     rMSDD = np.sqrt(np.mean(dif))
-    pNN50 = a*100/(len(IBI)) #porcentaje de diferencia entre intervalos adyacentes mayores a 50 ms
+    #pNN50 = a*100/(len(IBI)) #porcentaje de diferencia entre intervalos adyacentes mayores a 50 ms
     
     '''
     ##frecuencia - intervalos mas largos
@@ -274,7 +289,7 @@ def hrv_ccst(tiempo_peaks, amplitud_peaks): #dependen del tpo de la ventana - ve
     #hay mas en tesis de portugues
     '''
     
-    return AVNN, SDNN, rMSDD, pNN50, IBI
+    return AVNN, SDNN, rMSDD, IBI
 
 def get_peaksECG(data, timestamps, fs, show = False): #de biosppy
         # segment
@@ -330,7 +345,7 @@ def get_peaksECG(data, timestamps, fs, show = False): #de biosppy
 
     return rpeaks, hr, ts, ts_hr, hr_idx
 
-def get_peaksPPG(data, tpo, show = False):
+def get_peaksPPG(data, tpo, show = False): #no para ventanas pq se corta
     max_peaks = peakdetect(data, lookahead=35) #devuelve min_peaks en [1]
     indice, amplitud = zip(*max_peaks[0])
     indice = list(indice)
@@ -359,7 +374,8 @@ def get_peaksPPG(data, tpo, show = False):
         plt.show()
         
     return amplitud_peaks, tiempo_peaks
-    
+
+
 
 #PPG y ECG
 def peaks_getHR(tiempo_peaks, show = True): #data ya limpia
@@ -374,6 +390,7 @@ def peaks_getHR(tiempo_peaks, show = True): #data ya limpia
     hr = hr[indx]
     tiempo_peaks = np.array(tiempo_peaks)
     tpo = tiempo_peaks[indx]
+    
     if show:
         plt.figure()
         plt.grid()
@@ -383,6 +400,7 @@ def peaks_getHR(tiempo_peaks, show = True): #data ya limpia
         plt.ylabel('Ritmo cardiaco [bpm]')
         plt.show()
 
+    return hr, tpo
 #EEG
 def get_bandas(signal, nch, sampling_rate):
     
@@ -399,6 +417,80 @@ def get_bandas(signal, nch, sampling_rate):
     
     return ts_feat, theta, alpha, beta, gamma
 
+def get_bandas_wavelet_(signal, sampling_rate):
+        b, a = st.get_filter(ftype='butter',
+                         band='lowpass',
+                         order=16,
+                         frequency=32,
+                         sampling_rate=sampling_rate)
+        
+        filtered, _ = st._filter_signal(b, a, signal=signal, check_phase=True, axis=0)
+    
+        wp = pywt.WaveletPacket(data=filtered, wavelet='db4', mode='symmetric', maxlevel = 3)
+        
+        #me interesa el coeficiente 3,1 (4-8) y 3,2 (8-12) = theta y alfa
+        theta = wp['aad'].data
+        alfa  = wp['ada'].data
+        
+        return theta, alfa
+    
+def get_alfaTheta_EEGW_alphaTheta(channels, nchannels = None):
+    theta = []
+    alfa =[]
+    for canal in channels:
+        t, a = get_bandas_wavelet_(np.array(channels[canal]), 128)
+        theta.append(t)
+        alfa.append(a)
+        
+    df_a = pd.DataFrame(alfa).transpose()
+    df_t = pd.DataFrame(theta).transpose()
+    
+        
+    if nchannels is not None:
+        df_a.columns = nchannels
+        df_t.columns = nchannels
+        
+    return df_t, df_a
+        
+#eeg PSD con welch
+def get_PSD_welch(x, fs):
+    f, pxx = welch(x, fs= fs, nperseg= x.size/3)
+    #beta = [12 - 25] Hz
+    beta_pxx, beta_f = obtener_bandaf(12, 25.5, pxx, f)
+
+    #alfa = [8 - 12] Hz
+    alfa_pxx, alfa_f = obtener_bandaf(8, 12.5, pxx, f)
+
+    return alfa_pxx, beta_pxx
+
+def get_PSD_bandas_alfaBeta(canales, nchannels = None, fs = 128):
+    alfa = []
+    beta = []
+    for canal in canales:
+        a, b = get_PSD_welch(np.array(canales[canal]), fs)
+        alfa.append(a)
+        beta.append(b)
+    df_a = pd.DataFrame(alfa).transpose() #revisar
+    df_b = pd.DataFrame(beta).transpose()
+
+    if nchannels is not None:
+        df_a.columns = nchannels
+        df_b.columns = nchannels
+        
+    return df_a, df_b
+
+def get_coherence_banda(señal1, señal2, fc1, fc2, fs = 128):
+    f, cxy = coherence(señal1, señal2, fs = fs, nperseg= señal1.size/3)   
+    banda_cxy, freq = obtener_bandaf(fc1, fc2 + 0.5, cxy, f)     
+
+    return banda_cxy
+
 #gsr - numero de peaks
 def get_numPeaks(peaks):
     return np.count_nonzero(peaks)
+
+
+def escalar_df(df):
+    scaler = StandardScaler()     
+    df_ = scaler.fit_transform(df)
+    return df_
