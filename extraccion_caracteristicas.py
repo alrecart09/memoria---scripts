@@ -18,16 +18,16 @@ import pickle
 path = os.path.dirname(os.path.realpath(__file__))
 t = 5
 participantes = fn.listaParticipantes()[0]
-
-participantes = []
-participantes = ['pia-cortes']
-
+#participantes = [participantes[15]] #falta el 8, 15
+participantes = participantes[0:9]
 ccs_ = ['numFijaciones', 'numSacadas', 'promPupila', 'varPupila', 'promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'pendienteTemp', 'promTemp', 'medianaTemp', 'numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin']
 ccs_wkl_ = ['e_totalF3_theta', 'e_totalF4_theta', 'e_totalF7_theta', 'e_totalF8_theta', 'entropiaNorm_F3_theta', 'entropiaNorm_F4_theta', 'entropiaNorm_F7_theta', 'entropiaNorm_F8_theta', 'stdF3_theta', 'stdF4_theta', 'stdF7_theta', 'stdF8_theta', 'e_totalP7_alfa', 'e_totalP8_alfa', 'entropiaP7_alfa', 'entropiaP8_alfa', 'stdP7_alfa', 'stdP8_alfa']
 ccs_valenc_ = ['beta-alfaF3', 'beta-alfaF4', 'beta-alfaF7', 'beta-alfaF8', 'e_totalF3_beta', 'e_totalF4_beta', 'e_totalF7_beta', 'e_totalF8_beta', 'e_totalP7_beta', 'e_totalP8_beta', 'cF7F8']
 ccs_arousal_ = ['e_totalP7_beta', 'e_totalP8_beta', 'cP7O2', 'cP8O1', 'cP7P8', 'cO1O2']
 
+
 for sujeto in participantes:
+    ccs_ = ['numFijaciones', 'numSacadas', 'promPupila', 'varPupila', 'promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'pendienteTemp', 'promTemp', 'medianaTemp', 'numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin']
     print('\x1b[1;45m' + str(sujeto) +'\x1b[0m')
     num = 0 #num ventana
     
@@ -36,7 +36,7 @@ for sujeto in participantes:
     #listaVentanas = ['119.pkl']
     
     path_ventana = path +'/sujetos/'+ sujeto + '/ventanasU/' + str(t) +  '/'    
-    path_ccs = fn.makedir(sujeto, path, 'caracteristicas/' + t )
+    path_ccs = fn.makedir(sujeto, path, 'caracteristicas/' + str(t) )
     
     #normalizar GSR
     path_ = path + '/sujetos/' + sujeto + '/'
@@ -58,7 +58,7 @@ for sujeto in participantes:
     matriz_eeg_valencia = np.empty(shape = (cant_ventanas, 11))
     matriz_eeg_arousal = np.empty(shape = (cant_ventanas, 6)) #+1 para poner la actividad q estan haciendo
     actividades = []
-    
+    vent_nulas = 0
     for ventana in listaVentanas:
         with open(path_ventana + ventana, 'rb') as f:
             lista_ventana = pickle.load(f)
@@ -70,14 +70,18 @@ for sujeto in participantes:
         gsr = lista_ventana[5] #ojo que está en segundos - *1000 para ms
         eyeT = lista_ventana[6]
         
+        if any(x == 0 for x in [ppg.size, temp.size, eeg.size, ecg.size, gsr.size, eyeT.size]):
+            print("ventana nula = " + ventana)
+            vent_nulas += 1
+            continue
+
+        actividades.append(lista_ventana[0][0])
+        
         lista_caracteristicas = []
         lista_caracteristicas_eeg_wkl = []
         lista_caracteristicas_eeg_valencia = []
         lista_caracteristicas_eeg_arousal = []
 
-        
-        actividades.append(lista_ventana[0][0])
-        
         #eeg - bandas de frec
         eeg_data = eeg.drop('time',axis=1)
         
@@ -93,6 +97,8 @@ for sujeto in participantes:
         ##alfa = parietales
         alfa = alfa_.drop(['F3', 'F4', 'F7', 'F8'], axis = 1) #- canales q no necesite
         
+        #theta = theta_
+        #alfa = alfa_
         entropia_theta = []
         energia_theta = []
         std_theta = []
@@ -261,6 +267,14 @@ for sujeto in participantes:
         ccs = ccs.drop(['promPupila', 'varPupila'], axis = 1)
         ccs_ = ['numFijaciones', 'numSacadas', 'promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'pendienteTemp', 'promTemp', 'medianaTemp', 'numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin']
     
+    if vent_nulas:
+        print('Se borra espacio ventana nula')
+        ccs = ccs[:-vent_nulas]
+        ccs_wkl = ccs_wkl[:-vent_nulas]
+        ccs_arousal = ccs_arousal[:-vent_nulas]
+        ccs_valenc = ccs_valenc[:-vent_nulas]
+
+    
     #estandarizar cada caracteristica:
     ccs = cc.escalar_df(ccs)
     ccs_wkl = cc.escalar_df(ccs_wkl)
@@ -272,7 +286,7 @@ for sujeto in participantes:
     ccs_valenc = pd.DataFrame(ccs_valenc, columns= ccs_valenc_)
     ccs_arousal = pd.DataFrame(ccs_arousal, columns = ccs_arousal_)
     
-    break
+
     #guardar matriz en pickle ccs_t.pkl, eeg_wkl.pkl, eeg_arousal.pkl, eeg_valencia.pkl, actividades.pkl
     ccs.to_pickle(path_ccs + 'ccs.pkl')
     ccs_wkl.to_pickle(path_ccs +  'ccs_wkl.pkl')

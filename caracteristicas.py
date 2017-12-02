@@ -74,7 +74,11 @@ def get_slope(data, time, show = False): #se hace regresion lineal a los datos, 
     return slope
 
 def get_powerSpect(data, fs):
-    frequency, power = welch(data, fs, nperseg= data.size/3)
+    if data.size < 3:
+        npe = data.size
+    else:
+        npe = int(data.size/3)
+    frequency, power = welch(data, fs, nperseg= npe)
     return frequency, power
 
 def obtener_bandaf(fc1, fc2, power, frequency):
@@ -424,7 +428,7 @@ def get_bandas_wavelet_(signal, sampling_rate):
                          frequency=32,
                          sampling_rate=sampling_rate)
         
-        filtered, _ = st._filter_signal(b, a, signal=signal, check_phase=True, axis=0)
+        filtered, _ = filtro._filter_signal2(b, a, signal=signal, check_phase=True, axis=0)
     
         wp = pywt.WaveletPacket(data=filtered, wavelet='db4', mode='symmetric', maxlevel = 3)
         
@@ -454,7 +458,11 @@ def get_alfaTheta_EEGW_alphaTheta(channels, nchannels = None):
         
 #eeg PSD con welch
 def get_PSD_welch(x, fs):
-    f, pxx = welch(x, fs= fs, nperseg= x.size/3)
+    if x.size < 3:
+        npe = x.size
+    else:
+        npe = int(x.size/3)
+    f, pxx = welch(x, fs= fs, nperseg= npe)
     #beta = [12 - 25] Hz
     beta_pxx, beta_f = obtener_bandaf(12, 25.5, pxx, f)
 
@@ -480,7 +488,11 @@ def get_PSD_bandas_alfaBeta(canales, nchannels = None, fs = 128):
     return df_a, df_b
 
 def get_coherence_banda(señal1, señal2, fc1, fc2, fs = 128):
-    f, cxy = coherence(señal1, señal2, fs = fs, nperseg= señal1.size/3)   
+    if señal1.size < 3:
+        npe = señal1.size
+    else:
+        npe = int(señal1.size/3)
+    f, cxy = coherence(señal1, señal2, fs = fs, nperseg= npe)  
     banda_cxy, freq = obtener_bandaf(fc1, fc2 + 0.5, cxy, f)     
 
     return banda_cxy
