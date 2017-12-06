@@ -19,7 +19,8 @@ path = os.path.dirname(os.path.realpath(__file__))
 t = 5
 participantes = fn.listaParticipantes()[0]
 #participantes = [participantes[15]] #falta el 8, 15
-participantes = participantes[0:9]
+participantes = []
+participantes = ['camila-socias']
 ccs_ = ['numFijaciones', 'numSacadas', 'promPupila', 'varPupila', 'promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'pendienteTemp', 'promTemp', 'medianaTemp', 'numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin']
 ccs_wkl_ = ['e_totalF3_theta', 'e_totalF4_theta', 'e_totalF7_theta', 'e_totalF8_theta', 'entropiaNorm_F3_theta', 'entropiaNorm_F4_theta', 'entropiaNorm_F7_theta', 'entropiaNorm_F8_theta', 'stdF3_theta', 'stdF4_theta', 'stdF7_theta', 'stdF8_theta', 'e_totalP7_alfa', 'e_totalP8_alfa', 'entropiaP7_alfa', 'entropiaP8_alfa', 'stdP7_alfa', 'stdP8_alfa']
 ccs_valenc_ = ['beta-alfaF3', 'beta-alfaF4', 'beta-alfaF7', 'beta-alfaF8', 'e_totalF3_beta', 'e_totalF4_beta', 'e_totalF7_beta', 'e_totalF8_beta', 'e_totalP7_beta', 'e_totalP8_beta', 'cF7F8']
@@ -54,9 +55,9 @@ for sujeto in participantes:
     tpo_gsr = duracion_ultima + (cant_ventanas - 1)*t
     
     matriz_ccs = np.empty(shape = (cant_ventanas, 27)) #shape en f = num_ventanas, c = num_ccs
-    matriz_eeg_wkl = np.empty(shape = (cant_ventanas, 18))
-    matriz_eeg_valencia = np.empty(shape = (cant_ventanas, 11))
-    matriz_eeg_arousal = np.empty(shape = (cant_ventanas, 6)) #+1 para poner la actividad q estan haciendo
+    matriz_eeg_wkl = np.empty(shape = (cant_ventanas, 84))
+    matriz_eeg_valencia = np.empty(shape = (cant_ventanas, 21))
+    matriz_eeg_arousal = np.empty(shape = (cant_ventanas, 18)) #+1 para poner la actividad q estan haciendo
     actividades = []
     vent_nulas = 0
     for ventana in listaVentanas:
@@ -85,7 +86,8 @@ for sujeto in participantes:
         #eeg - bandas de frec
         eeg_data = eeg.drop('time',axis=1)
         
-        eeg_wavelet = eeg_data.drop(['AF3', 'AF4', 'FC5', 'TC6', 'T7', 'T8', 'O1', 'O2'], axis = 1)
+        eeg_wavelet = eeg_data
+        #eeg_wavelet = eeg_data.drop(['AF3', 'AF4', 'FC5', 'TC6', 'T7', 'T8', 'O1', 'O2'], axis = 1)
         ###carga cognitiva eeg: alfa, teta - caracteristicas de wavelets *intento1
 
         #coeficientes wavelet para bandas alfa y theta 
@@ -93,10 +95,11 @@ for sujeto in participantes:
         
         #quedarse solo con canales de interes
         ##theta = frontales
-        theta = theta_.drop(['P7', 'P8'], axis = 1) #- canales q no necesite
+        #theta = theta_.drop(['P7', 'P8'], axis = 1) #- canales q no necesite
+        theta = theta_
         ##alfa = parietales
-        alfa = alfa_.drop(['F3', 'F4', 'F7', 'F8'], axis = 1) #- canales q no necesite
-        
+        #alfa = alfa_.drop(['F3', 'F4', 'F7', 'F8'], axis = 1) #- canales q no necesite
+        alfa = alfa_
         #theta = theta_
         #alfa = alfa_
         entropia_theta = []
@@ -124,18 +127,21 @@ for sujeto in participantes:
         matriz_eeg_wkl[num] = np.array(lista_caracteristicas_eeg_wkl)
         
         ###emociones eeg: alfa, beta
-        eeg_emociones = eeg_data.drop(['AF3', 'AF4', 'FC5', 'TC6', 'T7', 'T8'],axis = 1)
+        #eeg_emociones = eeg_data.drop(['AF3', 'AF4', 'FC5', 'TC6', 'T7', 'T8'],axis = 1)
+        eeg_emociones = eeg_data
         alpha, beta = cc.get_PSD_bandas_alfaBeta(eeg_emociones, nchannels = eeg_emociones.columns, fs = 128) #power
         
-        alfa_f = alpha.drop([ 'O1', 'O2', 'P7', 'P8'], axis = 1) #frontal
-
+        #alfa_f = alpha.drop([ 'O1', 'O2', 'P7', 'P8'], axis = 1) #frontal
+        alfa_f = alpha
         
         ###valencia: betaAlfa_frontal, beta_frontalParietal, cxy_F7F8_alfa
-        beta_frontalParietal = beta.drop(['O1', 'O2'], axis = 1) #frontal y parietal
-        beta_frontal = beta_frontalParietal.drop(['P7', 'P8'], axis = 1)
+        #beta_frontalParietal = beta.drop(['O1', 'O2'], axis = 1) #frontal y parietal
+        beta_frontal = beta
+        #beta_frontal = beta_frontalParietal.drop(['P7', 'P8'], axis = 1)
         betaAlfa_frontal = beta_frontal.sum(axis = 0)- alfa_f.sum(axis = 0) #4
         cxy_F7F8_alfa = cc.get_coherence_banda(eeg_data['F7'], eeg_data['F8'], fc1 = 8, fc2 = 12, fs = 128)
         
+        beta_frontalParietal = beta
         e_total_f_beta = beta_frontalParietal[['F3', 'F4', 'F7', 'F8']].sum(axis = 0)#4
         e_total_p_beta = beta_frontalParietal[['P7', 'P8']].sum(axis = 0) #2
         cxy_total = sum(cxy_F7F8_alfa)
@@ -145,7 +151,8 @@ for sujeto in participantes:
         
         matriz_eeg_valencia[num] = lista_caracteristicas_eeg_valencia
         ###excitacion: beta_parietal, cxy_P3P4_beta, cxy_O2O1_beta, cxy_P3O2_beta, cxy_P4O1_beta, alfa_frontal
-        beta_parietal = beta.drop(['F3', 'F4', 'F7', 'F8', 'O1', 'O2'], axis = 1) #parietal 
+        beta_parietal = beta
+        #beta_parietal = beta.drop(['F3', 'F4', 'F7', 'F8', 'O1', 'O2'], axis = 1) #parietal 
         cxy_P7O2_beta = cc.get_coherence_banda(eeg_data['P7'], eeg_data['O2'], fc1 = 12, fc2 = 25, fs = 128)
         cxy_P8O1_beta = cc.get_coherence_banda(eeg_data['P8'], eeg_data['O1'], fc1 = 12, fc2 = 25, fs = 128)
         cxy_P7P8_beta = cc.get_coherence_banda(eeg_data['P8'], eeg_data['P7'], fc1 = 12, fc2 = 25, fs = 128)
@@ -161,6 +168,7 @@ for sujeto in participantes:
         lista_caracteristicas_eeg_arousal.extend([cxy_p7o2, cxy_p8o1, cxy_p7p8, cxy_o1o2])
         
         matriz_eeg_arousal[num] = lista_caracteristicas_eeg_arousal
+        
         #eyeTracker - prom y var diametro pupila, numero-duracion sacadas/fijaciones
         diametro, tpo = cc.diametroPupila_(eyeT, show = False)# - usarlo? poca info en algunas medidas
         numeroFijaciones, duracionFijaciones, numeroSacadas, duracionSacadas = cc.num_sacadasFijaciones(eyeT)
@@ -235,13 +243,18 @@ for sujeto in participantes:
         lista_caracteristicas.extend((ppg_promedio, ppg_std, ppg_median, ppg_max, ppg_min))
         
         matriz_ccs[num] = np.array(lista_caracteristicas)
+        
         num+=1
         
 
     ccs = pd.DataFrame(matriz_ccs, columns = ccs_)
-    ccs_wkl = pd.DataFrame(matriz_eeg_wkl, columns = ccs_wkl_)
-    ccs_valenc = pd.DataFrame(matriz_eeg_valencia, columns= ccs_valenc_)
-    ccs_arousal = pd.DataFrame(matriz_eeg_arousal, columns = ccs_arousal_)
+    #ccs_wkl = pd.DataFrame(matriz_eeg_wkl, columns = ccs_wkl_)
+    #ccs_valenc = pd.DataFrame(matriz_eeg_valencia, columns= ccs_valenc_)
+    #ccs_arousal = pd.DataFrame(matriz_eeg_arousal, columns = ccs_arousal_)
+    
+    ccs_wkl = pd.DataFrame(matriz_eeg_wkl)
+    ccs_valenc = pd.DataFrame(matriz_eeg_valencia)
+    ccs_arousal = pd.DataFrame(matriz_eeg_arousal)
     
     #eliminar filas con algun valor nan en HR - uno o dos latidos (ventanas más cortas)
     indices_nullHR = ccs['AVNN'].index[ccs['AVNN'].apply(np.isnan)]
@@ -282,15 +295,17 @@ for sujeto in participantes:
     ccs_valenc = cc.escalar_df(ccs_valenc)
     
     ccs = pd.DataFrame(ccs, columns = ccs_)
-    ccs_wkl = pd.DataFrame(ccs_wkl, columns = ccs_wkl_)
-    ccs_valenc = pd.DataFrame(ccs_valenc, columns= ccs_valenc_)
-    ccs_arousal = pd.DataFrame(ccs_arousal, columns = ccs_arousal_)
-    
+   # ccs_wkl = pd.DataFrame(ccs_wkl, columns = ccs_wkl_)
+   # ccs_valenc = pd.DataFrame(ccs_valenc, columns= ccs_valenc_)
+   # ccs_arousal = pd.DataFrame(ccs_arousal, columns = ccs_arousal_)
+    ccs_wkl = pd.DataFrame(matriz_eeg_wkl)
+    ccs_valenc = pd.DataFrame(matriz_eeg_valencia)
+    ccs_arousal = pd.DataFrame(matriz_eeg_arousal)
 
     #guardar matriz en pickle ccs_t.pkl, eeg_wkl.pkl, eeg_arousal.pkl, eeg_valencia.pkl, actividades.pkl
     ccs.to_pickle(path_ccs + 'ccs.pkl')
-    ccs_wkl.to_pickle(path_ccs +  'ccs_wkl.pkl')
-    ccs_arousal.to_pickle(path_ccs + 'ccs_arousal.pkl')
-    ccs_valenc.to_pickle(path_ccs + 'ccs_valencia.pkl')
+    ccs_wkl.to_pickle(path_ccs +  'ccs_wkl_t.pkl')
+    ccs_arousal.to_pickle(path_ccs + 'ccs_arousal_t.pkl')
+    ccs_valenc.to_pickle(path_ccs + 'ccs_valencia_t.pkl')
     actividades.to_pickle(path_ccs + 'actividades_ccs.pkl')
     
