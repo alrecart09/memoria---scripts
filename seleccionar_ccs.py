@@ -15,25 +15,31 @@ t = 5
 participantes = fn.listaParticipantes()[0]
 
 participantes = []
-participantes = ['roberto-rojas']
+participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
+participantes = []
+participantes = ['rodrigo-chi']
 
 for sujeto in participantes:
     print(sujeto)
-    
+
     path_etiquetas = path +'/sujetos/'+ sujeto + '/' 
-    etiquetas_wkl =  pd.read_pickle(path_etiquetas + 'ccs_wkl-testPupila.pkl')
+    etiquetas_wkl =  pd.read_pickle(path_etiquetas + 'etiquetas-wklPupila.pkl')
     
     path_ccs = path +'/sujetos/'+ sujeto + '/caracteristicas/' + str(t) +  '/' 
     ccs = pd.read_pickle(path_ccs + 'ccs.pkl')
-    
+    ccs_eeg =  pd.read_pickle(path_ccs + 'ccs_wkl.pkl')
     ccs_wkl = ccs.drop(['promPupila', 'varPupila'], axis = 1)
     #ccs_wkl['etiquetas'] = etiquetas_wkl
     
+    ccs_wkl =  pd.concat([ccs_wkl, ccs_eeg], axis=1)
+
     selector = sc.rfecvRF(ccs_wkl, etiquetas_wkl)
     
     mascara = selector.support_ #dice cuales elige
     
     seleccion = ccs_wkl.iloc[:, mascara]
     
-    print('caracteristicas seleccionadas: ' + seleccion.columns)
+    print(seleccion.columns)
+    
+    seleccion.to_pickle(path_ccs +  'seleccion_ccs_wkl.pkl')

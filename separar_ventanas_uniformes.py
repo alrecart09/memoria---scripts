@@ -19,7 +19,7 @@ import pickle
 path = os.path.dirname(os.path.realpath(__file__))
 
 participantes = fn.listaParticipantes()[0]
-t = 5 #segundos - duracion ventana
+t = 3 #segundos - duracion ventana
 minimo = 0.5 #segundos - minimo para ser ventana
 cant_señales = 6 #ppg, temp, eeg, ecg, gsr, eyet
 fs = [120, 50, 128, 100, 10, 120] #ppg, temp, eeg, ecg, gsr, eyeT

@@ -248,11 +248,11 @@ for sujeto in participantes:
         
 
     ccs = pd.DataFrame(matriz_ccs, columns = ccs_)
-    #ccs_wkl = pd.DataFrame(matriz_eeg_wkl, columns = ccs_wkl_)
+    ccs_wkl = pd.DataFrame(matriz_eeg_wkl, columns = ccs_wkl_)
     #ccs_valenc = pd.DataFrame(matriz_eeg_valencia, columns= ccs_valenc_)
     #ccs_arousal = pd.DataFrame(matriz_eeg_arousal, columns = ccs_arousal_)
     
-    ccs_wkl = pd.DataFrame(matriz_eeg_wkl)
+    #ccs_wkl = pd.DataFrame(matriz_eeg_wkl)
     ccs_valenc = pd.DataFrame(matriz_eeg_valencia)
     ccs_arousal = pd.DataFrame(matriz_eeg_arousal)
     
@@ -295,17 +295,17 @@ for sujeto in participantes:
     ccs_valenc = cc.escalar_df(ccs_valenc)
     
     ccs = pd.DataFrame(ccs, columns = ccs_)
-   # ccs_wkl = pd.DataFrame(ccs_wkl, columns = ccs_wkl_)
+    ccs_wkl = pd.DataFrame(ccs_wkl, columns = ccs_wkl_)
    # ccs_valenc = pd.DataFrame(ccs_valenc, columns= ccs_valenc_)
    # ccs_arousal = pd.DataFrame(ccs_arousal, columns = ccs_arousal_)
-    ccs_wkl = pd.DataFrame(matriz_eeg_wkl)
+   # ccs_wkl = pd.DataFrame(matriz_eeg_wkl)
     ccs_valenc = pd.DataFrame(matriz_eeg_valencia)
     ccs_arousal = pd.DataFrame(matriz_eeg_arousal)
 
     #guardar matriz en pickle ccs_t.pkl, eeg_wkl.pkl, eeg_arousal.pkl, eeg_valencia.pkl, actividades.pkl
-    ccs.to_pickle(path_ccs + 'ccs.pkl')
+    #ccs.to_pickle(path_ccs + 'ccs.pkl')
     ccs_wkl.to_pickle(path_ccs +  'ccs_wkl_t.pkl')
-    ccs_arousal.to_pickle(path_ccs + 'ccs_arousal_t.pkl')
-    ccs_valenc.to_pickle(path_ccs + 'ccs_valencia_t.pkl')
-    actividades.to_pickle(path_ccs + 'actividades_ccs.pkl')
+    #ccs_arousal.to_pickle(path_ccs + 'ccs_arousal_t.pkl')
+    #ccs_valenc.to_pickle(path_ccs + 'ccs_valencia_t.pkl')
+    # actividades.to_pickle(path_ccs + 'actividades_ccs.pkl')
     

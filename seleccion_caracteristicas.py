@@ -21,7 +21,7 @@ def rfecvRF(x, etiquetas):
             return stats.zscore(super().feature_importances_)
     
     y=etiquetas.values.ravel() #revisar cantidad de etiquetas?
-    rf = RandomForestClassifierWithCoef(oob_score = True, n_jobs=-1)
+    rf = RandomForestClassifierWithCoef(n_estimators = 100, oob_score = True, n_jobs=-1)
     rfecv = RFECV(estimator=rf, step=1, cv=2, verbose=0)
     selector=rfecv.fit(x, y)
     

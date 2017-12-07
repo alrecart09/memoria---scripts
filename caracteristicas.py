@@ -282,7 +282,7 @@ def hrv_ccst(tiempo_peaks, amplitud_peaks): #dependen del tpo de la ventana - ve
     #pNN50 = a*100/(len(IBI)) #porcentaje de diferencia entre intervalos adyacentes mayores a 50 ms
     
     '''
-    ##frecuencia - intervalos mas largos
+    ##frecuencia - se necesitan intervalos mas largos
     VLF= integrate.simps(power_vlf, frequency_vlf) #VLF = desde 0.003 a 0.04
     LF= integrate.simps(power_lf, frequency_lf)#desde 0.04 a 0.15 Hz
     HF= integrate.simps(power_hf, frequency_hf)#desde 0.15 a 0.4 Hz
