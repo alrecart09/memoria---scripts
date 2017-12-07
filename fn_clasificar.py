@@ -35,7 +35,7 @@ def funcion_clasificar(x, y, clasificador, nClases, num_trials=30):
     recall_i= []
     f1_i = []
     for i in range(num_trials):
-        skf = StratifiedKFold(n_splits=3, shuffle = True)
+        skf = StratifiedKFold(n_splits=2, shuffle = True)
         score =cross_validate(clasificador, x, y, scoring = scoring, cv = skf, return_train_score = False)
     
         accuracy_i.append(score['test_%s'%scoring[0]].mean())
@@ -48,3 +48,14 @@ def funcion_clasificar(x, y, clasificador, nClases, num_trials=30):
     rec =[np.array(recall_i).mean(), np.array(recall_i).std()] 
     f =  [np.array(f1_i).mean(), np.array(f1_i).std()]
     return ac, pre, rec, f
+
+def guardar_resultados(accuracy, precision, recall, f1, resultados):
+    print('h')
+    resultados.append(accuracy[0])
+    resultados.append(accuracy[1])
+    resultados.append(precision[0])
+    resultados.append(precision[1])
+    resultados.append(recall[0])
+    resultados.append(recall[1])
+    resultados.append(f1[0])
+    resultados.append(f1[1])

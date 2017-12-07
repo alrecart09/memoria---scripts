@@ -458,10 +458,10 @@ def get_alfaTheta_EEGW_alphaTheta(channels, nchannels = None):
         
 #eeg PSD con welch
 def get_PSD_welch(x, fs):
-    if x.size < 3:
+    if x.size < 10:
         npe = x.size
     else:
-        npe = int(x.size/3)
+        npe = int(x.size/2)
     f, pxx = welch(x, fs= fs, nperseg= npe)
     #beta = [12 - 25] Hz
     beta_pxx, beta_f = obtener_bandaf(12, 25.5, pxx, f)
