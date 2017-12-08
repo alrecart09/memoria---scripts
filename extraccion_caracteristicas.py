@@ -11,16 +11,17 @@ import numpy as np
 import caracteristicas as cc
 import funciones as fn
 import pickle
+from sklearn.pipeline import make_pipeline
 #import warnings
 
 #warnings.simplefilter("error")
  
 path = os.path.dirname(os.path.realpath(__file__))
-t = 3
+t =2
 participantes = fn.listaParticipantes()[0]
-#participantes = [participantes[15]] #falta el 8, 15
-
-#participantes = participantes[3:]
+#participantes = [participantes[24]] #falta8, 24
+#participantes =[]
+#participantes = ['roberto-rojas', 'juan-zambrano']
 
 ccs_ = ['numFijaciones', 'numSacadas', 'promPupila', 'varPupila', 'promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'pendienteTemp', 'promTemp', 'medianaTemp', 'numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin']
 ccs_wkl_ = ['e_totalF3_theta', 'e_totalF4_theta', 'e_totalF7_theta', 'e_totalF8_theta', 'entropiaNorm_F3_theta', 'entropiaNorm_F4_theta', 'entropiaNorm_F7_theta', 'entropiaNorm_F8_theta', 'stdF3_theta', 'stdF4_theta', 'stdF7_theta', 'stdF8_theta', 'e_totalP7_alfa', 'e_totalP8_alfa', 'entropiaP7_alfa', 'entropiaP8_alfa', 'stdP7_alfa', 'stdP8_alfa']
@@ -200,7 +201,7 @@ for sujeto in participantes:
         peaks = np.array(ecg['peaks'])
         tpo_peaks = tpo_peaks[i_peaks]
         hr, ts_hr = cc.peaks_getHR(tpo_peaks, show = False)
-        
+
         if hr.size== 0:
             prom_hr = np.nan
             std_hr = np.nan
@@ -296,11 +297,11 @@ for sujeto in participantes:
         ccs_valenc = ccs_valenc[:-vent_nulas]
 
     
-    #estandarizar cada caracteristica:
-    ccs = cc.escalar_df(ccs)
-    ccs_wkl = cc.escalar_df(ccs_wkl)
-    ccs_arousal = cc.escalar_df(ccs_arousal)
-    ccs_valenc = cc.escalar_df(ccs_valenc)
+    #estandarizar cada caracteristica - en train y test:
+    #ccs = cc.escalar_df(ccs)
+    #ccs_wkl = cc.escalar_df(ccs_wkl)
+    #ccs_arousal = cc.escalar_df(ccs_arousal)
+    #ccs_valenc = cc.escalar_df(ccs_valenc)
     
     ccs = pd.DataFrame(ccs, columns = ccs_)
     ccs_wkl = pd.DataFrame(ccs_wkl, columns = ccs_wkl_)
@@ -309,11 +310,10 @@ for sujeto in participantes:
     #ccs_wkl = pd.DataFrame(matriz_eeg_wkl)
     #ccs_valenc = pd.DataFrame(matriz_eeg_valencia)
     #ccs_arousal = pd.DataFrame(matriz_eeg_arousal)
-    
+
     #guardar matriz en pickle ccs_t.pkl, eeg_wkl.pkl, eeg_arousal.pkl, eeg_valencia.pkl, actividades.pkl
-    ccs.to_pickle(path_ccs + 'ccs' + str(t) + '.pkl')
-    ccs_wkl.to_pickle(path_ccs +  'ccs_wkl_' + str(t) + '.pkl')
-    ccs_arousal.to_pickle(path_ccs + 'ccs_arousal_' + str(t) + '.pkl')
-    ccs_valenc.to_pickle(path_ccs + 'ccs_valencia_' + str(t) + '.pkl')
-    actividades.to_pickle(path_ccs + 'actividades_ccs' + str(t) + '.pkl')
-    
+    ccs.to_pickle(path_ccs + 'ccs.pkl')
+    ccs_wkl.to_pickle(path_ccs +  'ccs_wkl.pkl')
+    ccs_arousal.to_pickle(path_ccs + 'ccs_arousal.pkl')
+    ccs_valenc.to_pickle(path_ccs + 'ccs_valencia.pkl')
+    actividades.to_pickle(path_ccs + 'actividades_ccs.pkl')

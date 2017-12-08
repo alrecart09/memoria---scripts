@@ -47,14 +47,14 @@ participantes = fn.listaParticipantes()[0]
 #participantes = ['manuela-diaz', 'camila-socias', 'boris-suazo']
 #participantes = ['felipe-silva']
 participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
-participantes = ['ivan-zimmermann']
+
 for sujeto in participantes:
     print(sujeto)
     
     path_ccs = path +'/sujetos/'+ sujeto + '/caracteristicas/' + str(t) +  '/' 
-    #caracteristicas_wkl =  pd.read_pickle(path_ccs + 'ccs_wkl_t.pkl')
+    #caracteristicas_wkl =  pd.read_pickle(path_ccs +  'ccs_wkl_' + str(t) + '.pkl')
     caracteristicas = pd.read_pickle(path_ccs + 'ccs.pkl')
-    #valencia = pd.read_pickle(path_ccs + 'ccs_valencia_t.pkl')
+    #valencia = pd.read_pickle(path_ccs + 'ccs_valencia.pkl')
     #arousal = pd.read_pickle(path_ccs + 'ccs_arousal.pkl')
     ccs_ = caracteristicas[['promPupila', 'varPupila']]
     #ccs_a = caracteristicas[['gsrAcum', 'promGSR', 'powerGSR', 'maxFasica', 'numPeaksFasica', 'promFasica']]
@@ -67,7 +67,7 @@ for sujeto in participantes:
     k_best = [] #guardar el mejor labels de cada i
     etiquetas_best = []
     ch__= []
-    for i in range(100):
+    for i in range(50):
         n_rows, n_columns =6,6 #cantidad de neuronas que quiero (cuan densa la zona)
         som = somoclu.Somoclu(n_columns, n_rows, gridtype='hexagonal')
         som.train(data=np.float32(data), epochs=1000)
@@ -76,7 +76,7 @@ for sujeto in participantes:
         calinski =[]
         silueta = []
         etiquetas = []
-        for k in range(2, 8):
+        for k in range(2, 7):
             af = AgglomerativeClustering(n_clusters = k,linkage="average", affinity='cityblock')
             som.cluster(algorithm = af)
             #state = som.get_surface_state()
@@ -102,10 +102,10 @@ for sujeto in participantes:
         best_k_s= max(enumerate(silueta),key=lambda x: x[1])[0] + 2
         calinskii = max(calinski)
 
-        print('Calinksy ' + str(best_k_ch) + ' vs Silueta ' + str(best_k_s))
+        #print('Calinksy ' + str(best_k_ch) + ' vs Silueta ' + str(best_k_s))
         
         if best_k_ch == best_k_s:
-            print('me repito en ' + str(best_k_ch) + 'en ' + str(i))
+            #print('me repito en ' + str(best_k_ch) + 'en ' + str(i))
             k_best.append(best_k_ch)
             etiquetas_best.append(etiquetas[best_k_ch-2])
             ch__.append(calinskii)
@@ -148,13 +148,14 @@ for sujeto in participantes:
     else: #si ninguno se repite
         print('correr denuevo - no pasa ná')
     y = collections.Counter(labels_elegidas)
-    print('numero de clusters = ' + str(k_elegido) + 'reparticion' + str(y))
+    print('numero de clusters = ' + str(k_elegido) + ' reparticion' + str(y))
 
     #guardar etiquetas WKL
     etiquetas = pd.DataFrame(labels_elegidas)
-    etiquetas.to_pickle(path +'/sujetos/'+ sujeto + '/etiquetas-wklPupila.pkl')
-
-#%%    
+    etiquetas.to_pickle(path +'/sujetos/'+ sujeto + '/etiquetas-wklPupila_' + str(t) + '.pkl')
+    
+#%%
+    '''
     #graficos 2D pupila
     fig, ax = plt.subplots()
      
@@ -186,9 +187,9 @@ for sujeto in participantes:
      #ax.scatter(data[i, 0], data[i, 1], c="r", marker = 'x')
      #ax.scatter(data[j, 0], data[j, 1], c="b", marker = 's')
     ax.grid()   
-
-
-'''    
+    '''
+    
+    '''    
     t0 = time()
     tsne = manifold.TSNE(n_components=2, init='random',
                           random_state=0, perplexity=30, n_iter=5000)
