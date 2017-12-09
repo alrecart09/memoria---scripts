@@ -80,7 +80,7 @@ def makedir(sujeto, path, carpeta):
         os.makedirs(path + '/sujetos/' + sujeto + '/' + carpeta + '/')
     return newpath
 
-def makedir2( path, carpeta):
+def makedir2(path, carpeta):
     newpath = path + '/' + carpeta + '/'
     if not os.path.exists(newpath):
         os.makedirs(path + '/' + carpeta + '/')
