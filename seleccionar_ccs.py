@@ -14,7 +14,7 @@ import numpy as np
 
 ## cambiar dimension matriz, nombres ccs/etiquetas, nombre archivo a guardar 
 path = os.path.dirname(os.path.realpath(__file__))
-t = 5
+t = 2
 participantes = fn.listaParticipantes()[0]
 
 #participantes = []
@@ -22,7 +22,11 @@ participantes = fn.listaParticipantes()[0]
 
 #participantes = ['braian-wilhelm', 'luz-ugarte']
 matriz = np.empty(shape = (len(participantes), 24)) #arousal 29, valencia 24
+matriz2 = np.empty(shape = (len(participantes), 26))#arousal 31, valencia 26
 num = 0
+
+conPupila= 26
+sinPupila=24
 for sujeto in participantes:
     print(sujeto)
     
@@ -33,6 +37,7 @@ for sujeto in participantes:
     ccs = pd.read_pickle(path_ccs + 'ccs.pkl')
     ccs_eegA = pd.read_pickle(path_ccsA + sujeto + '_ccs_arousal.pkl')
     ccs_eegV = pd.read_pickle(path_ccsV + sujeto + '_ccs_valencia.pkl')
+    
     
     ##AROUSAL Y VALENCIA  
     ccs_arousal = ccs.drop(['numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR'],axis = 1) #eliminar GSR
@@ -47,6 +52,8 @@ for sujeto in participantes:
 
     etiquetas_val = pd.read_pickle(path_etiquetas + sujeto + '_etiquetas-valenciaHR.pkl') #_etiquetas-arousalGSR.pkl
     etiquetas_ar = pd.read_pickle(path_etiquetas + sujeto + '_etiquetas-arousalGSR.pkl')
+    #print(ccs_valencia.shape[1])
+    
     
     ##WKL##
     #ccs_eeg =  pd.read_pickle(path_ccs + 'ccs_wkl.pkl')
@@ -67,17 +74,25 @@ for sujeto in participantes:
         #print('seleccion = ' + str(seleccion))
         suma += seleccion
         #print('suma = ' + str(suma))
-    matriz[num, :] = suma
+    
+    if ccs.shape[1] == conPupila:        
+        matriz2[num, :] = suma
+        cols2 = ccs.columns
+    else:
+        matriz[num,:] = suma
+        cols = ccs.columns
+        
     print('suma total =' + str(suma))
     num +=1
+    
 
-seleccion = pd.DataFrame(data = matriz, columns = ccs.columns)
-
+seleccion_sinPupila = pd.DataFrame(data = matriz, columns = cols)
+seleccion_conPupila = pd.DataFrame(data = matriz2, columns = cols2)
 total = seleccion.sum(axis = 0)
 total = total.sort_values(ascending = False)
 
 path_resultados = path + '/resultados/' + str(t) + '/' 
 
-#seleccion.to_pickle(path_resultados +  'seleccion_ccs_arousalHistograma.pkl')
-    
+seleccion_sinPupila.to_pickle(path_resultados +  'seleccion_ccs_valenciaHistogramaSinPupila.pkl')
+seleccion_conPupila.to_pickle(path_resultados +  'seleccion_ccs_valenciaHistogramaConPupila.pkl')
 print('5 caracteristicas más seleccionadas \n' + str(total[0:5]))
