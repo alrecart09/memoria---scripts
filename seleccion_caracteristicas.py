@@ -25,7 +25,7 @@ def rfecvRF(x, etiquetas):
     rfecv = RFECV(estimator=rf, step=1, cv=2, verbose=0)
     selector=rfecv.fit(x, y)
     
-    return selector #que deveulve?
+    return selector 
 #http://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.RFECV.html lo que devuelve el selector
 
 

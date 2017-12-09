@@ -80,6 +80,12 @@ def makedir(sujeto, path, carpeta):
         os.makedirs(path + '/sujetos/' + sujeto + '/' + carpeta + '/')
     return newpath
 
+def makedir2( path, carpeta):
+    newpath = path + '/' + carpeta + '/'
+    if not os.path.exists(newpath):
+        os.makedirs(path + '/' + carpeta + '/')
+    return newpath
+
 def listaVent(sujeto, folder): #lista archivos en folder '/nombre/'
     path = os.path.dirname(os.path.realpath(__file__))
     path_ventana = path +'/sujetos/'+ sujeto + folder

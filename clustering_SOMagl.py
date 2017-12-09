@@ -37,7 +37,7 @@ import operator
 
 ###realizar clustering 
 path = os.path.dirname(os.path.realpath(__file__))
-t = 5
+t =2
 participantes = fn.listaParticipantes()[0]
 
 
@@ -45,8 +45,10 @@ participantes = fn.listaParticipantes()[0]
 #participantes = []
 #participantes = ['israfel-salazar']
 #participantes = ['manuela-diaz', 'camila-socias', 'boris-suazo']
-#participantes = ['felipe-silva']
-participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
+participantes = ['manuela-diaz']
+#participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
+
+path_clusters = fn.makedir2(path, 'clusters/' + str(t) )
 
 for sujeto in participantes:
     print(sujeto)
@@ -57,10 +59,15 @@ for sujeto in participantes:
     #valencia = pd.read_pickle(path_ccs + 'ccs_valencia.pkl')
     #arousal = pd.read_pickle(path_ccs + 'ccs_arousal.pkl')
     ccs_ = caracteristicas[['promPupila', 'varPupila']]
-    #ccs_a = caracteristicas[['gsrAcum', 'promGSR', 'powerGSR', 'maxFasica', 'numPeaksFasica', 'promFasica']]
-    #ccs_v = caracteristicas[['promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD']]
+    ccs_a = caracteristicas[['gsrAcum', 'promGSR', 'powerGSR', 'maxFasica', 'numPeaksFasica', 'promFasica']]
+    ccs_v = caracteristicas[['promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD']]
     
-    data = ccs_
+    data = ccs_a
+    
+    data = cc.escalar_df(data)
+    #ccs_wkl = cc.escalar_df(ccs_wkl)
+    #ccs_arousal = cc.escalar_df(ccs_arousal)
+    #ccs_valenc = cc.escalar_df(ccs_valenc)
     
     # som + aglomerativo
   
@@ -72,11 +79,12 @@ for sujeto in participantes:
         som = somoclu.Somoclu(n_columns, n_rows, gridtype='hexagonal')
         som.train(data=np.float32(data), epochs=1000)
         bmu = som.bmus #los puntos originales a que neurona están mapeados x,y
-    
+        
+        
         calinski =[]
         silueta = []
         etiquetas = []
-        for k in range(2, 7):
+        for k in range(2,7):
             af = AgglomerativeClustering(n_clusters = k,linkage="average", affinity='cityblock')
             som.cluster(algorithm = af)
             #state = som.get_surface_state()
@@ -141,21 +149,22 @@ for sujeto in participantes:
             maxim.append(mas_comun)
             
         indice_elegido, minimo_valor = min(enumerate(maxim), key=operator.itemgetter(1))
-        #print(indice_elegido)
+        print(indice_elegido)
         #indice_elegido = max(enumerate(ch_),key=lambda x: x[1])[0]
         labels_elegidas = lb_[indice_elegido]
 
     else: #si ninguno se repite
-        print('correr denuevo - no pasa ná')
+        print('no pasa ná')
     y = collections.Counter(labels_elegidas)
-    print('numero de clusters = ' + str(k_elegido) + ' reparticion' + str(y))
-
+    print('numero de clusters = ' + str(k_elegido) + ' reparticion ' + str(y))
+    
+    
     #guardar etiquetas WKL
     etiquetas = pd.DataFrame(labels_elegidas)
-    etiquetas.to_pickle(path +'/sujetos/'+ sujeto + '/etiquetas-wklPupila_' + str(t) + '.pkl')
+    etiquetas.to_pickle(path_clusters + sujeto + '_etiquetas-valenciaHR.pkl')
     
 #%%
-    '''
+    '''   
     #graficos 2D pupila
     fig, ax = plt.subplots()
      
@@ -187,8 +196,8 @@ for sujeto in participantes:
      #ax.scatter(data[i, 0], data[i, 1], c="r", marker = 'x')
      #ax.scatter(data[j, 0], data[j, 1], c="b", marker = 's')
     ax.grid()   
-    '''
     
+    '''    
     '''    
     t0 = time()
     tsne = manifold.TSNE(n_components=2, init='random',
@@ -234,7 +243,7 @@ for sujeto in participantes:
  
     ax.scatter(Y[j, 0], Y[j, 1], c="b", marker = 's')
      #ax.scatter(Y[blue, 0], Y[blue, 1], c="b")
-'''    
+   ''' 
 #     ax.xaxis.set_major_formatter(NullFormatter())
 #     ax.yaxis.set_major_formatter(NullFormatter())
 #     ax.axis('tight')
