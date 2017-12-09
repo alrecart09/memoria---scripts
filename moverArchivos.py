@@ -12,11 +12,11 @@ import shutil
 #copiar ccs valencia y excitacion a carpeta general para pasar a otro PC
 
 path = os.path.dirname(os.path.realpath(__file__))
-t =2
-participantes = fn.listaParticipantes()[0]
+t =5
+#participantes = fn.listaParticipantes()[0]
 
 path_nuevo = fn.makedir2(path, 'caracteristicas_ar/' + str(t) + '/')
-
+participantes = ['constantino-hernandez']
 for sujeto in participantes:
     
     print('\x1b[1;45m' + str(sujeto) +'\x1b[0m')

@@ -10,6 +10,7 @@ import funciones as fn
 import pandas as pd
 import seleccion_caracteristicas as sc
 import numpy as np
+import caracteristicas as cc
 ###extraccion caracteristicas basado en etiquetas de clustering
 
 ## cambiar dimension matriz, nombres ccs/etiquetas, nombre archivo a guardar 
@@ -17,14 +18,14 @@ path = os.path.dirname(os.path.realpath(__file__))
 t = 2
 participantes = fn.listaParticipantes()[0]
 
-#participantes = []
+#participantes = ['constantino-hernandez']
 #participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
 #participantes = ['braian-wilhelm', 'luz-ugarte']
 matriz = np.empty(shape = (len(participantes), 24)) #arousal 29, valencia 24
 matriz2 = np.empty(shape = (len(participantes), 26))#arousal 31, valencia 26
-num = 0
-
+num1 = 0
+num2=0
 conPupila= 26
 sinPupila=24
 for sujeto in participantes:
@@ -46,7 +47,8 @@ for sujeto in participantes:
     ccs_arousal = pd.concat([ccs_arousal, ccs_eegA], axis = 1)
     ccs_valencia = pd.concat([ccs_valencia, ccs_eegV], axis = 1)
     resultados = []
-
+    
+    #df.isnull().values.any()
     path_etiquetas = path +'/clusters/'+ str(t) + '/'
     
 
@@ -62,8 +64,10 @@ for sujeto in participantes:
     
     ccs = ccs_valencia#ccs_valencia
     etiquetas = etiquetas_val #etiquetas_val
-    suma = np.zeros(shape = (ccs.shape[1]))
     
+    ccs = cc.escalar_df(ccs) #sean comparables
+    suma = np.zeros(shape = (ccs.shape[1]))
+   
     for i in range(5):
         selector = sc.rfecvRF(ccs, etiquetas)
                
@@ -76,23 +80,29 @@ for sujeto in participantes:
         #print('suma = ' + str(suma))
     
     if ccs.shape[1] == conPupila:        
-        matriz2[num, :] = suma
+        matriz2[num1, :] = suma
         cols2 = ccs.columns
+        num1 +=1
     else:
-        matriz[num,:] = suma
+        matriz[num2,:] = suma
         cols = ccs.columns
-        
+        num2 +=1
     print('suma total =' + str(suma))
-    num +=1
+   
     
 
 seleccion_sinPupila = pd.DataFrame(data = matriz, columns = cols)
 seleccion_conPupila = pd.DataFrame(data = matriz2, columns = cols2)
-total = seleccion.sum(axis = 0)
-total = total.sort_values(ascending = False)
+
+total_sinPupila = seleccion_sinPupila.sum(axis = 0)
+total_sinPupila = total_sinPupila.sort_values(ascending = False)
+
+total_conPupila = seleccion_conPupila.sum(axis = 0)
+total_conPupila = total_conPupila.sort_values(ascending = False)
 
 path_resultados = path + '/resultados/' + str(t) + '/' 
 
 seleccion_sinPupila.to_pickle(path_resultados +  'seleccion_ccs_valenciaHistogramaSinPupila.pkl')
 seleccion_conPupila.to_pickle(path_resultados +  'seleccion_ccs_valenciaHistogramaConPupila.pkl')
-print('5 caracteristicas más seleccionadas \n' + str(total[0:5]))
+print('5 caracteristicas más seleccionadas con pupila \n' + str(total_conPupila[0:5]))
+print('5 caracteristicas más seleccionadas sin pupila \n' + str(total_sinPupila[0:5]))

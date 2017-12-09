@@ -20,8 +20,8 @@ path = os.path.dirname(os.path.realpath(__file__))
 t =2
 participantes = fn.listaParticipantes()[0]
 #participantes = [participantes[24]] #falta8, 24
-#participantes =[]
-#participantes = ['roberto-rojas', 'juan-zambrano']
+participantes =[]
+participantes = ['constantino-hernandez']
 
 ccs_ = ['numFijaciones', 'numSacadas', 'promPupila', 'varPupila', 'promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'pendienteTemp', 'promTemp', 'medianaTemp', 'numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin']
 ccs_wkl_ = ['e_totalF3_theta', 'e_totalF4_theta', 'e_totalF7_theta', 'e_totalF8_theta', 'entropiaNorm_F3_theta', 'entropiaNorm_F4_theta', 'entropiaNorm_F7_theta', 'entropiaNorm_F8_theta', 'stdF3_theta', 'stdF4_theta', 'stdF7_theta', 'stdF8_theta', 'e_totalP7_alfa', 'e_totalP8_alfa', 'entropiaP7_alfa', 'entropiaP8_alfa', 'stdP7_alfa', 'stdP8_alfa']
@@ -270,6 +270,14 @@ for sujeto in participantes:
     ccs_valenc = pd.DataFrame(matriz_eeg_valencia, columns= ccs_valenc_)
     ccs_arousal = pd.DataFrame(matriz_eeg_arousal, columns = ccs_arousal_)
     
+    if vent_nulas:
+        print('Se borra espacio ventana nula')
+        ccs = ccs[:-vent_nulas]
+        ccs_wkl = ccs_wkl[:-vent_nulas]
+        ccs_arousal = ccs_arousal[:-vent_nulas]
+        ccs_valenc = ccs_valenc[:-vent_nulas]
+
+
     #ccs_wkl = pd.DataFrame(matriz_eeg_wkl)
     #ccs_valenc = pd.DataFrame(matriz_eeg_valencia)
     #ccs_arousal = pd.DataFrame(matriz_eeg_arousal)
@@ -298,12 +306,6 @@ for sujeto in participantes:
         ccs = ccs.drop(['promPupila', 'varPupila'], axis = 1)
         ccs_ = ['numFijaciones', 'numSacadas', 'promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'pendienteTemp', 'promTemp', 'medianaTemp', 'numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin']
     
-    if vent_nulas:
-        print('Se borra espacio ventana nula')
-        ccs = ccs[:-vent_nulas]
-        ccs_wkl = ccs_wkl[:-vent_nulas]
-        ccs_arousal = ccs_arousal[:-vent_nulas]
-        ccs_valenc = ccs_valenc[:-vent_nulas]
 
     
     ccs = pd.DataFrame(ccs, columns = ccs_)
@@ -315,8 +317,10 @@ for sujeto in participantes:
     #ccs_arousal = pd.DataFrame(matriz_eeg_arousal)
 
     #guardar matriz en pickle ccs_t.pkl, eeg_wkl.pkl, eeg_arousal.pkl, eeg_valencia.pkl, actividades.pkl
+    '''
     ccs.to_pickle(path_ccs + 'ccs.pkl')
     ccs_wkl.to_pickle(path_ccs +  'ccs_wkl.pkl')
     ccs_arousal.to_pickle(path_ccs + 'ccs_arousal.pkl')
     ccs_valenc.to_pickle(path_ccs + 'ccs_valencia.pkl')
     actividades.to_pickle(path_ccs + 'actividades_ccs.pkl')
+    '''
