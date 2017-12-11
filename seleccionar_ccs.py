@@ -15,13 +15,31 @@ import caracteristicas as cc
 
 ## cambiar dimension matriz, nombres ccs/etiquetas, nombre archivo a guardar 
 path = os.path.dirname(os.path.realpath(__file__))
-t = 2
-participantes = fn.listaParticipantes()[0]
+t = 5
 
-#participantes = ['constantino-hernandez']
+participantes = ['luz-ugarte',
+ 'manuela-diaz',
+ 'matias-gomez',
+ 'matias-mattamala',
+ 'mauricio-avdalov',
+ 'melissa-chaperon',
+ 'michelle-fredes',
+ 'miguel-sanchez',
+ 'nicolas-burgos',
+ 'nicolas-mellado',
+ 'pablo-gonzalez',
+ 'patricio-mallea',
+ 'pia-cortes',
+ 'ricardo-ramos',
+ 'roberto-rojas',
+ 'rodrigo-chi',
+ 'rodrigo-perez',
+ 'tom-cataldo',
+ 'tomas-lagos']
+
 #participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
-#participantes = ['braian-wilhelm', 'luz-ugarte']
+#participantes = ['catalina-astorga']
 matriz = np.empty(shape = (len(participantes), 24)) #arousal 29, valencia 24
 matriz2 = np.empty(shape = (len(participantes), 26))#arousal 31, valencia 26
 num1 = 0
@@ -81,11 +99,11 @@ for sujeto in participantes:
     
     if ccs.shape[1] == conPupila:        
         matriz2[num1, :] = suma
-        cols2 = ccs.columns
+        cols2 = ccs_valencia.columns
         num1 +=1
     else:
         matriz[num2,:] = suma
-        cols = ccs.columns
+        cols = ccs_valencia.columns
         num2 +=1
     print('suma total =' + str(suma))
    
@@ -102,7 +120,7 @@ total_conPupila = total_conPupila.sort_values(ascending = False)
 
 path_resultados = path + '/resultados/' + str(t) + '/' 
 
-seleccion_sinPupila.to_pickle(path_resultados +  'seleccion_ccs_valenciaHistogramaSinPupila.pkl')
-seleccion_conPupila.to_pickle(path_resultados +  'seleccion_ccs_valenciaHistogramaConPupila.pkl')
+seleccion_sinPupila.to_pickle(path_resultados +  'seleccion_ccs_valenciaHistogramaSinPupila_desdeLerko.pkl')
+seleccion_conPupila.to_pickle(path_resultados +  'seleccion_ccs_valenciaHistogramaConPupila_desdeLerko.pkl')
 print('5 caracteristicas más seleccionadas con pupila \n' + str(total_conPupila[0:5]))
 print('5 caracteristicas más seleccionadas sin pupila \n' + str(total_sinPupila[0:5]))

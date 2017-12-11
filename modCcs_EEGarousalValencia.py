@@ -31,7 +31,7 @@ ccs_wkl_ = ['e_totalF3_theta', 'e_totalF4_theta', 'e_totalF7_theta', 'e_totalF8_
 ccs_valenc_ = ['beta-alfaF3', 'beta-alfaF4', 'beta-alfaF7', 'beta-alfaF8', 'e_totalF3_beta', 'e_totalF4_beta', 'e_totalF7_beta', 'e_totalF8_beta', 'e_totalP7_beta', 'e_totalP8_beta', 'cF7F8', 'asimetria_a/b_F4F3', 'asimetria_a/b_F8/F7']
 ccs_arousal_ = ['e_totalP7_beta', 'e_totalP8_beta', 'cP7O2', 'cP8O1', 'cP7P8', 'cO1O2', 'b/a_AF3', 'b/a_AF4', 'b/a_F3', 'b/a_F4']
 
-participantes =['constantino-hernandez']
+participantes =['catalina-astorga']
 
 for sujeto in participantes:
     ccs_ = ['numFijaciones', 'numSacadas', 'promPupila', 'varPupila', 'promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'pendienteTemp', 'promTemp', 'medianaTemp', 'numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin']
@@ -318,7 +318,7 @@ for sujeto in participantes:
     ccs = pd.DataFrame(ccs, columns = ccs_)
     #ccs_wkl = pd.DataFrame(ccs_wkl, columns = ccs_wkl_)
     ccs_valenc = pd.DataFrame(ccs_valenc, columns= ccs_valenc_)
-    ccs_arousal = pd.DataFrame(ccs_arousal, columns = ccs_arousal_)
+    #ccs_arousal = pd.DataFrame(ccs_arousal, columns = ccs_arousal_)
     #ccs_wkl = pd.DataFrame(matriz_eeg_wkl)
     #ccs_valenc = pd.DataFrame(matriz_eeg_valencia)
     #ccs_arousal = pd.DataFrame(matriz_eeg_arousal)
@@ -326,6 +326,6 @@ for sujeto in participantes:
     #guardar matriz en pickle ccs_t.pkl, eeg_wkl.pkl, eeg_arousal.pkl, eeg_valencia.pkl, actividades.pkl
     #ccs.to_pickle(path_ccs + 'ccs.pkl')
     #ccs_wkl.to_pickle(path_ccs +  'ccs_wkl.pkl')
-    ccs_arousal.to_pickle(path_ccs + 'ccs_arousal.pkl')
+    #ccs_arousal.to_pickle(path_ccs + 'ccs_arousal.pkl')
     ccs_valenc.to_pickle(path_ccs + 'ccs_valencia.pkl')
     #actividades.to_pickle(path_ccs + 'actividades_ccs.pkl')
