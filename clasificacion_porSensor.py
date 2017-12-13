@@ -184,6 +184,7 @@ for sujeto in participantes:
     ccs_ppg.reset_index(drop = True, inplace = True)
     ccs_temp.reset_index(drop = True, inplace = True)
     ccs_ecg.reset_index(drop = True, inplace = True)
+    ccs_eyeT.reset_index(drop = True, inplace = True)
     etiquetas.reset_index(drop = True, inplace = True)
     
     cuenta = collections.Counter(etiquetas.values.ravel())
@@ -228,6 +229,7 @@ for sujeto in participantes:
     ccs_ppg = np.array(ccs_ppg)
     ccs_temp = np.array(ccs_temp)
     ccs_ecg = np.array(ccs_ecg)
+    ccs_eyeT = np.array(ccs_eyeT)
     etiquetas = etiquetas.values.ravel()
     
     
