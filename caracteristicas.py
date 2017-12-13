@@ -435,14 +435,16 @@ def get_bandas_wavelet_(signal, sampling_rate):
         #me interesa el coeficiente 3,1 (4-8) y 3,2 (8-12) = theta y alfa
         theta = wp['aad'].data
         alfa  = wp['ada'].data
-        
-        return theta, alfa
+        aaa = wp['aaa'].data
+        aa = wp['aa'].data
+        a = wp['a'].data
+        return theta, alfa, aaa, aa, a
     
 def get_alfaTheta_EEGW_alphaTheta(channels, nchannels = None):
     theta = []
     alfa =[]
     for canal in channels:
-        t, a = get_bandas_wavelet_(np.array(channels[canal]), 128)
+        t, a, _,_,_ = get_bandas_wavelet_(np.array(channels[canal]), 128)
         theta.append(t)
         alfa.append(a)
         
@@ -455,6 +457,27 @@ def get_alfaTheta_EEGW_alphaTheta(channels, nchannels = None):
         df_t.columns = nchannels
         
     return df_t, df_a
+
+def get_aproximacionWaveletPckg(channels, nchannels = None):
+    aaa_ = []
+    aa_ =[]
+    a_ = []
+    for canal in channels:
+        _, _, aaa,aa,a = get_bandas_wavelet_(np.array(channels[canal]), 128)
+        aaa_.append(aaa)
+        aa_.append(aa)
+        a_.append(a)
+        
+    df_aaa = pd.DataFrame(aaa_).transpose()
+    df_aa = pd.DataFrame(aa_).transpose()
+    df_a = pd.DataFrame(a_).transpose()    
+        
+    if nchannels is not None:
+        df_aaa.columns = nchannels
+        df_aa.columns = nchannels
+        df_a.columns = nchannels
+
+    return df_aaa, df_aa, df_a
         
 #eeg PSD con welch
 def get_PSD_welch(x, fs):
