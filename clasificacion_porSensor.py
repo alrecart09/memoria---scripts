@@ -17,14 +17,66 @@ import warnings
 import fn_clasificar as clsf
 #combinacion de sensores
 
-t=5 #valencia y arousal
-t=2 #wkl
 
 path = os.path.dirname(os.path.realpath(__file__))
 
-t = 2
+#participantes = fn.listaParticipantes()[0]
 
-participantes = fn.listaParticipantes()[0]
+participantes = ['alejandro-cuevas',
+ 'boris-suazo',
+ 'braian-wilhelm',
+ 'camila-socias',
+ 'carlos-navarro',
+ 'catalina-astorga',
+ 'catalina-pino',
+ 'claudio-soto',
+ 'constantino-hernandez',
+ 'constanza-villegas',
+ 'diego-gonzalez',
+ 'diego-villegas',
+ 'eduardo-matamoros',
+ 'emilio-urbano',
+ 'esteban-jofre',
+ 'felipe-silva',
+ 'francisca-asenjo',
+ 'francisca-barrera',
+ 'francisca-herrera',
+ 'francisco-guerrero',
+ 'gonzalo-olave',
+ 'hector-otarola',
+ 'ismael-jaras',
+ 'ismael-silva',
+ 'israfel-salazar',
+ 'ivan-zimmermann',
+ 'ivania-valenzuela',
+ 'jaime-aranda',
+ 'javier-rojas',
+ 'jenny-miranda',
+ 'jose-ogalde',
+ 'josefina-larranaga',
+ 'josefina-vasquez',
+ 'juan-cantillana',
+ 'juan-zambrano',
+ 'lerko-araya',
+ 'luz-ugarte',
+ 'manuela-diaz',
+ 'matias-gomez',
+ 'matias-mattamala',
+ 'mauricio-avdalov',
+ 'melissa-chaperon',
+ 'michelle-fredes',
+ 'miguel-sanchez',
+ 'nicolas-burgos',
+ 'nicolas-mellado',
+ 'pablo-gonzalez',
+ 'patricio-mallea',
+ 'pia-cortes',
+ 'ricardo-ramos',
+ 'roberto-rojas',
+ 'rodrigo-chi',
+ 'rodrigo-perez',
+ 'tom-cataldo',
+ 'tomas-lagos']
 
 num_repeticiones = 5
 warnings.filterwarnings('ignore') 
@@ -47,13 +99,16 @@ if valencia:
     ppg = False
     ecg = False
     sensores = ['eeg', 'temp', 'gsr', 'eyeT']
+    t=5
 elif arousal:
     gsr = False
     sensores = ['eeg', 'temp', 'ppg', 'ecg', 'eyeT']
+    t=5
 else: #wkl
     eyeT = False 
     participantes = participantes_wkl
     sensores = ['eeg', 'temp', 'gsr', 'ppg', 'ecg']
+    t=2
     
 c_acc = [s + '_acc' for s in sensores]
 c_acc_std = [s + '_accStd' for s in sensores]
@@ -79,7 +134,6 @@ for i in range(len(sensores)):
 matrix = np.empty(shape = (len(participantes), len(clmn)))    #len(clmn)
 i=0    
 
-participantes = ['boris-suazo']
 for sujeto in participantes:
     pupila = False
     print('\x1b[1;45m' + str(sujeto) +'\x1b[0m')
@@ -218,12 +272,12 @@ for sujeto in participantes:
 df_resultados = pd.DataFrame(matrix, columns = clmn)
 
 path_resultados = path + '/resultados/'
-'''
+
 if valencia:
     df_resultados.to_pickle(path_resultados + 'valencia_clasificadores_porSensor.pkl')
 elif arousal:
     df_resultados.to_pickle(path_resultados + 'arousal_clasificadores_porSensor.pkl')
 else: #wkl
     df_resultados.to_pickle(path_resultados + 'wkl_clasificadores_porSensor.pkl')
-'''    
+   
 #m = df_resultados.filter(like='_acc') seleccionar maximo y bla
