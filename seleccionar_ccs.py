@@ -15,8 +15,9 @@ import caracteristicas as cc
 
 ## cambiar dimension matriz, nombres ccs/etiquetas, nombre archivo a guardar 
 path = os.path.dirname(os.path.realpath(__file__))
-t = 5
+t = 2
 
+'''
 participantes = ['luz-ugarte',
  'manuela-diaz',
  'matias-gomez',
@@ -36,12 +37,12 @@ participantes = ['luz-ugarte',
  'rodrigo-perez',
  'tom-cataldo',
  'tomas-lagos']
-
-#participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
+'''
+participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
 #participantes = ['catalina-astorga']
-matriz = np.empty(shape = (len(participantes), 24)) #arousal 29, valencia 24
-matriz2 = np.empty(shape = (len(participantes), 26))#arousal 31, valencia 26
+matriz = np.empty(shape = (len(participantes), 43)) #arousal 29, valencia 24
+#matriz2 = np.empty(shape = (len(participantes), 26))#arousal 31, valencia 26
 num1 = 0
 num2=0
 conPupila= 26
@@ -57,7 +58,8 @@ for sujeto in participantes:
     ccs_eegA = pd.read_pickle(path_ccsA + sujeto + '_ccs_arousal.pkl')
     ccs_eegV = pd.read_pickle(path_ccsV + sujeto + '_ccs_valencia.pkl')
     
-    
+    etiquetas_wkl = pd.read_pickle(path + '/sujetos/' + sujeto + '/etiquetas-wklPupila_' + str(t) + '.pkl')
+    '''
     ##AROUSAL Y VALENCIA  
     ccs_arousal = ccs.drop(['numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR'],axis = 1) #eliminar GSR
     ccs_valencia = ccs.drop(['promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin'], axis = 1) #eliminar HR, PPG y ECG 
@@ -73,15 +75,15 @@ for sujeto in participantes:
     etiquetas_val = pd.read_pickle(path_etiquetas + sujeto + '_etiquetas-valenciaHR.pkl') #_etiquetas-arousalGSR.pkl
     etiquetas_ar = pd.read_pickle(path_etiquetas + sujeto + '_etiquetas-arousalGSR.pkl')
     #print(ccs_valencia.shape[1])
-    
+    '''
     
     ##WKL##
-    #ccs_eeg =  pd.read_pickle(path_ccs + 'ccs_wkl.pkl')
-    #ccs_wkl = ccs.drop(['promPupila', 'varPupila'], axis = 1)
-    #ccs_wkl =  pd.concat([ccs_wkl, ccs_eeg], axis=1)
+    ccs_eeg =  pd.read_pickle(path_ccs + 'ccs_wkl.pkl')
+    ccs_wkl = ccs.drop(['promPupila', 'varPupila'], axis = 1)
+    ccs_wkl =  pd.concat([ccs_wkl, ccs_eeg], axis=1)
     
-    ccs = ccs_valencia#ccs_valencia
-    etiquetas = etiquetas_val #etiquetas_val
+    ccs = ccs_wkl#ccs_valencia
+    etiquetas = etiquetas_wkl #etiquetas_val
     
     ccs = cc.escalar_df(ccs) #sean comparables
     suma = np.zeros(shape = (ccs.shape[1]))
@@ -96,7 +98,10 @@ for sujeto in participantes:
         #print('seleccion = ' + str(seleccion))
         suma += seleccion
         #print('suma = ' + str(suma))
+    matriz[num1, :] = suma
+    num1 +=1
     
+    '''
     if ccs.shape[1] == conPupila:        
         matriz2[num1, :] = suma
         cols2 = ccs_valencia.columns
@@ -105,22 +110,26 @@ for sujeto in participantes:
         matriz[num2,:] = suma
         cols = ccs_valencia.columns
         num2 +=1
+    '''
     print('suma total =' + str(suma))
-   
-    
 
-seleccion_sinPupila = pd.DataFrame(data = matriz, columns = cols)
-seleccion_conPupila = pd.DataFrame(data = matriz2, columns = cols2)
+seleccion = pd.DataFrame(data = matriz, columns = ccs_wkl.columns) 
+total = seleccion.sum(axis = 0)
+total = total.sort_values(ascending = False)
 
-total_sinPupila = seleccion_sinPupila.sum(axis = 0)
-total_sinPupila = total_sinPupila.sort_values(ascending = False)
+#seleccion_sinPupila = pd.DataFrame(data = matriz, columns = cols)
+#seleccion_conPupila = pd.DataFrame(data = matriz2, columns = cols2)
 
-total_conPupila = seleccion_conPupila.sum(axis = 0)
-total_conPupila = total_conPupila.sort_values(ascending = False)
+#total_sinPupila = seleccion_sinPupila.sum(axis = 0)
+#total_sinPupila = total_sinPupila.sort_values(ascending = False)
+
+#total_conPupila = seleccion_conPupila.sum(axis = 0)
+#total_conPupila = total_conPupila.sort_values(ascending = False)
 
 path_resultados = path + '/resultados/' + str(t) + '/' 
 
-seleccion_sinPupila.to_pickle(path_resultados +  'seleccion_ccs_valenciaHistogramaSinPupila_desdeLerko.pkl')
-seleccion_conPupila.to_pickle(path_resultados +  'seleccion_ccs_valenciaHistogramaConPupila_desdeLerko.pkl')
-print('5 caracteristicas más seleccionadas con pupila \n' + str(total_conPupila[0:5]))
-print('5 caracteristicas más seleccionadas sin pupila \n' + str(total_sinPupila[0:5]))
+seleccion.to_pickle(path_resultados + 'seleccion_ccs_wklHistograma.pkl')
+#seleccion_sinPupila.to_pickle(path_resultados +  'seleccion_ccs_valenciaHistogramaSinPupila_desdeLerko.pkl')
+#seleccion_conPupila.to_pickle(path_resultados +  'seleccion_ccs_valenciaHistogramaConPupila_desdeLerko.pkl')
+#print('5 caracteristicas más seleccionadas con pupila \n' + str(total_conPupila[0:5]))
+print('5 caracteristicas más seleccionadas \n' + str(total[0:5]))

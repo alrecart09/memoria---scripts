@@ -15,7 +15,7 @@ import numpy as np
 
 path = os.path.dirname(os.path.realpath(__file__))
 
-t = 5
+t = 2
 #participantes = fn.listaParticipantes()[0]
 participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
@@ -28,8 +28,8 @@ for sujeto in participantes:
     
     #path_etiquetas = path +'/clusters/'+ str(t) + '/'
     path_etiquetas = path + '/sujetos/' + sujeto + '/'
-    etiquetas = pd.read_pickle(path_etiquetas + 'etiquetas-wklPupila_' + str(t) + '.pkl') #_etiquetas-arousalGSR.pkl
-
+    #etiquetas = pd.read_pickle(path_etiquetas + sujeto + '_etiquetas-arousalGSR.pkl')
+    etiquetas = pd.read_pickle(path_etiquetas + 'etiquetas-wklPupila_' + str(t) + '.pkl')
    
     cuenta = collections.Counter(etiquetas.values.ravel())
     repeticion = cuenta.most_common()
@@ -51,3 +51,5 @@ for sujeto in participantes:
     clases_final.append(len(final))
     
 df = pd.DataFrame({'n_original': clases_original, 'n_final': clases_final})
+path_resultados = path + '/resultados/' + str(t) + '/'
+df.to_pickle(path_resultados + 'nClases_wkl.pkl')
