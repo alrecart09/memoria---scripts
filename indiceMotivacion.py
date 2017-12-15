@@ -20,23 +20,23 @@ import pickle
 #warnings.simplefilter("error")
  
 path = os.path.dirname(os.path.realpath(__file__))
-t = 2 #wkl
-#participantes = fn.listaParticipantes()[0]
+t =2 #wkl
+
+participantes = fn.listaParticipantes()[0]
 #participantes = participantes[24:] #falta8, 24
 #participantes =[]
 #participantes = ['roberto-rojas', 'juan-zambrano']
 
 ccs_ = ['numFijaciones', 'numSacadas', 'promPupila', 'varPupila', 'promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'pendienteTemp', 'promTemp', 'medianaTemp', 'numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin']
 #ccs_wkl_ = ['e_totalF3_theta', 'e_totalF4_theta', 'e_totalF7_theta', 'e_totalF8_theta', 'entropiaNorm_F3_theta', 'entropiaNorm_F4_theta', 'entropiaNorm_F7_theta', 'entropiaNorm_F8_theta', 'stdF3_theta', 'stdF4_theta', 'stdF7_theta', 'stdF8_theta', 'e_totalP7_alfa', 'e_totalP8_alfa', 'entropiaP7_alfa', 'entropiaP8_alfa', 'stdP7_alfa', 'stdP8_alfa']
-ccs_mot_ = ['AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'TC6',
-       'F4', 'F8', 'AF4']
+#ccs_mot_ = ['AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'TC6', 'F4', 'F8', 'AF4']
 
+ccs_mot_ = ['conjunto']
 #ccs_valenc_ = ['beta-alfaF3', 'beta-alfaF4', 'beta-alfaF7', 'beta-alfaF8', 'e_totalF3_beta', 'e_totalF4_beta', 'e_totalF7_beta', 'e_totalF8_beta', 'e_totalP7_beta', 'e_totalP8_beta', 'cF7F8', 'asimetria_a/b_F4F3', 'asimetria_a/b_F8/F7']
 #ccs_arousal_ = ['e_totalP7_beta', 'e_totalP8_beta', 'cP7O2', 'cP8O1', 'cP7P8', 'cO1O2', 'b/a_AF3', 'b/a_AF4', 'b/a_F3', 'b/a_F4']
 
 #participantes_wkl = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
-participantes =['roberto-rojas']
 
 for sujeto in participantes:
     path_ccsWkl = fn.makedir2(path, 'indiceMotivacion/' + str(t))
@@ -103,10 +103,10 @@ for sujeto in participantes:
                 
         indice_motivacion = []
         
-        alfa_ = alpha.sum() #energia total de un canal
-        beta_ = beta.sum()
-        theta_ = theta.sum() 
-        indice_motivacion = list(beta_/(alfa_+theta_))
+        alfa_ = alpha.sum().sum() #energia total de todos los canal
+        beta_ = beta.sum().sum()
+        theta_ = theta.sum().sum()
+        indice_motivacion = beta_/(alfa_+theta_)
         
         matriz_motivacion[num,:] = indice_motivacion
 
@@ -223,17 +223,17 @@ for sujeto in participantes:
     
     #para cada sujeto, si existe nan en diametro pupila - sacar esa caracteristica e imprimir nombre 
     indices_nullPupila = ccs['promPupila'].index[ccs['promPupila'].apply(np.isnan)]
-    #if (len(ccs) - len(indices_nullPupila)) > len(ccs)*0.8:
-    print('Se borran ventanas con pupila nula = ' + str(len(indices_nullPupila)))
-    ccs = ccs.drop(indices_nullPupila)
-    motivacion = motivacion.drop(indices_nullPupila)
+    if (len(ccs) - len(indices_nullPupila)) > len(ccs)*0.8:
+        print('Se borran ventanas con pupila nula = ' + str(len(indices_nullPupila)))
+        ccs = ccs.drop(indices_nullPupila)
+        motivacion = motivacion.drop(indices_nullPupila)
         #ccs_arousal = ccs_arousal.drop(indices_nullPupila)
         #ccs_valenc = ccs_valenc.drop(indices_nullPupila)
-    actividades = pd.DataFrame(actividades).drop(indices_nullPupila)
-    #else:
-    #    print('Se borra caracteristica de pupila prom y varianza - cant ventanas NAN = ' + str(len(indices_nullPupila)))
-    #    ccs = ccs.drop(['promPupila', 'varPupila'], axis = 1)
-    #    ccs_ = ['numFijaciones', 'numSacadas', 'promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'pendienteTemp', 'promTemp', 'medianaTemp', 'numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin']
+        actividades = pd.DataFrame(actividades).drop(indices_nullPupila)
+    else:
+        print('Se borra caracteristica de pupila prom y varianza - cant ventanas NAN = ' + str(len(indices_nullPupila)))
+        ccs = ccs.drop(['promPupila', 'varPupila'], axis = 1)
+        ccs_ = ['numFijaciones', 'numSacadas', 'promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'pendienteTemp', 'promTemp', 'medianaTemp', 'numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin']
     
     
     ccs = pd.DataFrame(ccs, columns = ccs_)
@@ -247,7 +247,7 @@ for sujeto in participantes:
 
     #guardar matriz en pickle ccs_t.pkl, eeg_wkl.pkl, eeg_arousal.pkl, eeg_valencia.pkl, actividades.pkl
     #ccs.to_pickle(path_ccs + 'ccs.pkl')
-    motivacion.to_pickle(path_ccsWkl +  sujeto + '_indiceMotivacion.pkl')
+    motivacion.to_pickle(path_ccsWkl +  sujeto + '_indiceMotivacionCombinado.pkl')
     #ccs_arousal.to_pickle(path_ccs + 'ccs_arousal.pkl')
     #ccs_valenc.to_pickle(path_ccs + 'ccs_valencia.pkl')
     #actividades.to_pickle(path_ccs + 'actividades_ccs.pkl')

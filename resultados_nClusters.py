@@ -19,18 +19,26 @@ t = 2
 #participantes = fn.listaParticipantes()[0]
 participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
-#participantes =[]
-#participantes = ['emilio-urbano']
+
 clases_original = []
 clases_final = []
 for sujeto in participantes:
     print('\x1b[1;45m' + str(sujeto) +'\x1b[0m')
+    path_ccs = path +'/sujetos/'+ sujeto + '/caracteristicas/' + str(t) +  '/' 
+    caracteristicas = pd.read_pickle(path_ccs + 'ccs.pkl')
     
+    pupila = caracteristicas['promPupila']
     #path_etiquetas = path +'/clusters/'+ str(t) + '/'
     path_etiquetas = path + '/sujetos/' + sujeto + '/'
     #etiquetas = pd.read_pickle(path_etiquetas + sujeto + '_etiquetas-arousalGSR.pkl')
     etiquetas = pd.read_pickle(path_etiquetas + 'etiquetas-wklPupila_' + str(t) + '.pkl')
-   
+    
+    pupila.reset_index(inplace=True, drop = True)
+    etiquetas.reset_index(inplace = True, drop = True)
+    
+    pupEt = pd.concat([etiquetas, pupila], axis = 1)
+    pupEt.columns = ['etiquetas', 'promPupila']
+    
     cuenta = collections.Counter(etiquetas.values.ravel())
     repeticion = cuenta.most_common()
     print('numero original de clases: ' + str(len(cuenta)), 'd ' + str(repeticion))
@@ -40,15 +48,26 @@ for sujeto in participantes:
         if cantidad < 6:
             #print('clase ' + str(clase) + ' con <= de 5 elementos')
             
-            indices = np.where(etiquetas == clase)[0]
+            indices = np.where(pupEt['etiquetas'] == clase)[0]
             #print(indices)
-            etiquetas = etiquetas.drop(list(indices))
+            pupEt = pupEt.drop(list(indices))
 
-            etiquetas.reset_index(drop = True, inplace = True)
+            pupEt.reset_index(drop = True, inplace = True)
             #print('borre clase ' + str(clase))
-    final =  collections.Counter(etiquetas.values.ravel())
+    final =  collections.Counter(pupEt['etiquetas'].values.ravel())
     print('numero final de clases: ' + str(len(final)))
     clases_final.append(len(final))
+    
+
+    pupila_clase =[]
+    for clase, cantidad in final.most_common():
+        ind = np.where(pupEt['etiquetas'] == clase)[0]
+        pup = pupEt['promPupila'][ind]
+        lista = [clase, pup.mean()]
+        pupila_clase.append(lista)
+        
+    print(pupila_clase)
+        
 '''   
 df = pd.DataFrame({'n_original': clases_original, 'n_final': clases_final})
 path_resultados = path + '/resultados/' + str(t) + '/'

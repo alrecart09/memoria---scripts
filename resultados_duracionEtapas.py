@@ -77,6 +77,7 @@ for sujeto in participantes:
     ventanas_buenas = ventanas_buenas.values.tolist()
     vent = 0
     duracion_ventana = []
+    '''
     for ventana in ventanas_buenas:
         with open(path_ventana + str(ventana[0]), 'rb') as f:
             lista_ventana = pickle.load(f)
@@ -121,6 +122,6 @@ resto = df_tiempos.drop(['borrador_duracion', 'revisando_duracion'], axis = 1)
 
 resto.mean()
 resto.std()
-
+'''
 
     

@@ -30,7 +30,7 @@ warnings.filterwarnings('ignore')
 
 participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
-#participantes = ['ivania-valenzuela']
+participantes = ['roberto-rojas']
 path_resultados = fn.makedir2(path, 'resultados/' + str(t) )
 clasificaciones = [ 'svmRbf_10']
 
@@ -59,7 +59,7 @@ i=0
 for sujeto in participantes:
     print('\x1b[1;45m' + str(sujeto) +'\x1b[0m')
     
-
+    '''
     path_ccs = path+ '/sujetos/' + sujeto + '/caracteristicas/' + str(t) + '/'
     
     ccs = pd.read_pickle(path_ccs + 'ccs.pkl')
@@ -68,11 +68,16 @@ for sujeto in participantes:
     ccs_wkl = ccs.drop(['promPupila', 'varPupila'], axis = 1)
     ccs_wkl =  pd.concat([ccs_wkl, ccs_eeg], axis=1)
     path_etiqueta = path +'/sujetos/'+ sujeto + '/etiquetas-wklPupila_' + str(t) + '.pkl' 
-    etiquetasWkl = pd.read_pickle(path_etiqueta)      
+    etiquetasWkl = pd.read_pickle(path_etiqueta)
+    '''      
     resultados = []
 
-    caracteristicas = ccs_wkl
-    etiquetas = etiquetasWkl
+    path_df = path + '/dosClustersWKL/' + sujeto + '_ccsEt.pkl'
+    df = pd.read_pickle(path_df)
+    
+    etiquetas = df['etiquetas']
+    caracteristicas = df.drop(['etiquetas'], axis = 1)
+
     
     caracteristicas.reset_index(drop = True, inplace = True) #tengan mismos indices - partan de 0 hasta len
     etiquetas.reset_index(drop = True, inplace = True)

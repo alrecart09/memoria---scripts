@@ -37,7 +37,7 @@ import operator
 
 ###realizar clustering 
 path = os.path.dirname(os.path.realpath(__file__))
-t =2
+t =5
 participantes = fn.listaParticipantes()[0]
 
 
@@ -45,24 +45,26 @@ participantes = fn.listaParticipantes()[0]
 #participantes = []
 #participantes = ['israfel-salazar']
 #participantes = ['manuela-diaz', 'camila-socias', 'boris-suazo']
-participantes = ['manuela-diaz']
+#participantes = ['manuela-diaz']
 #participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
-path_clusters = fn.makedir2(path, 'clusters/' + str(t) )
+path_clusters = fn.makedir2(path, 'clustersMotivacion/' + str(t) )
 
 for sujeto in participantes:
     print(sujeto)
     
     path_ccs = path +'/sujetos/'+ sujeto + '/caracteristicas/' + str(t) +  '/' 
     #caracteristicas_wkl =  pd.read_pickle(path_ccs +  'ccs_wkl_' + str(t) + '.pkl')
-    caracteristicas = pd.read_pickle(path_ccs + 'ccs.pkl')
+    #caracteristicas = pd.read_pickle(path_ccs + 'ccs.pkl')
     #valencia = pd.read_pickle(path_ccs + 'ccs_valencia.pkl')
     #arousal = pd.read_pickle(path_ccs + 'ccs_arousal.pkl')
-    ccs_ = caracteristicas[['promPupila', 'varPupila']]
-    ccs_a = caracteristicas[['gsrAcum', 'promGSR', 'powerGSR', 'maxFasica', 'numPeaksFasica', 'promFasica']]
-    ccs_v = caracteristicas[['promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD']]
+    #ccs_ = caracteristicas[['promPupila', 'varPupila']]
+    #ccs_a = caracteristicas[['gsrAcum', 'promGSR', 'powerGSR', 'maxFasica', 'numPeaksFasica', 'promFasica']]
+    #ccs_v = caracteristicas[['promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD']]
     
-    data = ccs_a
+    motivacion = pd.read_pickle(path + '/indiceMotivacion/' + str(t) + '/' + sujeto + '_indiceMotivacionCombinado.pkl')
+    
+    data = motivacion
     
     data = cc.escalar_df(data)
     #ccs_wkl = cc.escalar_df(ccs_wkl)
@@ -161,7 +163,7 @@ for sujeto in participantes:
     
     #guardar etiquetas WKL
     etiquetas = pd.DataFrame(labels_elegidas)
-    etiquetas.to_pickle(path_clusters + sujeto + '_etiquetas-valenciaHR.pkl')
+    etiquetas.to_pickle(path_clusters + sujeto + '_etiquetas-motivacion.pkl')
     
 #%%
     '''   
