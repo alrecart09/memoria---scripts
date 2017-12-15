@@ -41,7 +41,8 @@ def getPorcentaje_Clases(df_datos, nMaxClases):
     return df
 
 ##cargar resultados y Nclusters_finales
-path = path = os.path.dirname(os.path.realpath(__file__))
+path = os.path.dirname(os.path.realpath(__file__))
+'''
 path_resultados = path + '/resultados/' + str(t) + '/'
 
 valencia = pd.read_pickle(path_resultados + 'valencia_clasificadores_eegSeleccion.pkl')
@@ -69,19 +70,25 @@ if t == 5: #hay dos partes
     
 else:
     wkl = pd.read_pickle(path_resultados + 'wkl_clasificadores_eegSeleccion.pkl')
-    
-nClases_valencia = pd.read_pickle(path_resultados + 'nClases_valencia.pkl')
-nClases_arousal = pd.read_pickle(path_resultados + 'nClases_arousal.pkl')
+'''
+wkl = pd.read_pickle( path + '/resultados/' + 'wkl_eegCcsZarjam.pkl')
+
+path_resultados = path + '/resultados/' + str(t) + '/'
+
+   
+#nClases_valencia = pd.read_pickle(path_resultados + 'nClases_valencia.pkl')
+#nClases_arousal = pd.read_pickle(path_resultados + 'nClases_arousal.pkl')
 nClases_wkl = pd.read_pickle(path_resultados + 'nClases_wkl.pkl') 
 
-nClases_valencia = nClases_valencia[nClases_valencia['n_final'] != 1]
-nClases_arousal = nClases_arousal[nClases_arousal['n_final'] != 1]
+#nClases_valencia = nClases_valencia[nClases_valencia['n_final'] != 1]
+#nClases_arousal = nClases_arousal[nClases_arousal['n_final'] != 1]
 nClases_wkl = nClases_wkl[nClases_wkl['n_final'] != 1]
 
-nClases_valencia  = nClases_valencia['n_final'].reset_index(drop = True)
-nClases_arousal  = nClases_arousal['n_final'].reset_index(drop = True)
+#nClases_valencia  = nClases_valencia['n_final'].reset_index(drop = True)
+#nClases_arousal  = nClases_arousal['n_final'].reset_index(drop = True)
 nClases_wkl = nClases_wkl['n_final'].reset_index(drop = True)
 
+'''
 if t == 5: #valencia y arousal
     valencia_f1 = get_infoClasificador(valencia, 'knn_3', nClases_valencia)
     valencia_acc = get_infoClasificador(valencia, 'svmRbf_1_', nClases_valencia)
@@ -92,10 +99,12 @@ if t == 5: #valencia y arousal
 else: #t ==2
     wkl_f1 = get_infoClasificador(wkl, 'svmRbf_10_', nClases_wkl)
     wkl_acc = get_infoClasificador(wkl, 'svmRbf_1_', nClases_wkl)
+'''
+wkl_f1 = get_infoClasificador(wkl, 'svmRbf_10_', nClases_wkl)
 
 ##resultados clasificacion
-nMax_Valencia = max(nClases_valencia)
-nMax_arousal = max(nClases_arousal)
+#nMax_Valencia = max(nClases_valencia)
+#nMax_arousal = max(nClases_arousal)
 nMax_wkl = max(nClases_wkl)
 
 if t == 5:
@@ -112,6 +121,6 @@ if t == 5:
 else: #t == 2
     print('\x1b[1;45m WKL f1 \x1b[0m')
     df_wF1 =  getPorcentaje_Clases(wkl_f1, nMax_wkl)
-    print('\x1b[1;45m WKL acc \x1b[0m')
-    df_wAcc = getPorcentaje_Clases(wkl_acc, nMax_wkl)
+    #print('\x1b[1;45m WKL acc \x1b[0m')
+    #df_wAcc = getPorcentaje_Clases(wkl_acc, nMax_wkl)
  

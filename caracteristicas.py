@@ -491,14 +491,17 @@ def get_PSD_welch(x, fs):
 
     #alfa = [8 - 12] Hz
     alfa_pxx, alfa_f = obtener_bandaf(8, 12.5, pxx, f)
+    
+    #theta = []
+    theta_pxx, theta_f = obtener_bandaf(4, 8.5, pxx, f)
 
-    return alfa_pxx, beta_pxx
+    return alfa_pxx, beta_pxx, theta_pxx
 
 def get_PSD_bandas_alfaBeta(canales, nchannels = None, fs = 128):
     alfa = []
     beta = []
     for canal in canales:
-        a, b = get_PSD_welch(np.array(canales[canal]), fs)
+        a, b, _ = get_PSD_welch(np.array(canales[canal]), fs)
         alfa.append(a)
         beta.append(b)
     df_a = pd.DataFrame(alfa).transpose() #revisar
@@ -509,6 +512,24 @@ def get_PSD_bandas_alfaBeta(canales, nchannels = None, fs = 128):
         df_b.columns = nchannels
         
     return df_a, df_b
+
+def get_PSD_bandas_alfaBetaTheta(canales, nchannels = None, fs = 128):
+    alfa = []
+    beta = []
+    theta =[]
+    for canal in canales:
+        a, b, t = get_PSD_welch(np.array(canales[canal]), fs)
+        alfa.append(a)
+        beta.append(b)
+        theta.append(t)
+    df_a = pd.DataFrame(alfa).transpose() #revisar
+    df_b = pd.DataFrame(beta).transpose()
+    df_t = pd.DataFrame(theta).transpose()
+    if nchannels is not None:
+        df_a.columns = nchannels
+        df_b.columns = nchannels
+        df_t.columns = nchannels
+    return df_a, df_b, df_t
 
 def get_coherence_banda(señal1, señal2, fc1, fc2, fs = 128):
     if señal1.size < 3:

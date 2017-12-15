@@ -9,14 +9,16 @@ import os
 import funciones as fn
 import pandas as pd
 import pickle
+import caracteristicas as cc
+import numpy as np
 #cantidad de clusters en cada etapa de la escritura del ensayo
  
 path = os.path.dirname(os.path.realpath(__file__))
 
 
-t = 5 #valencia y arousal
-#t= 2 #wkl
-wkl = False
+#t = 5 #valencia y arousal
+t= 2 #wkl
+wkl = True 
 
 participantes = fn.listaParticipantes()[0]
 
@@ -28,19 +30,23 @@ def crear_df(lista, col):
 
 #participantes = []
 #participantes = ['israfel-salazar']
-#participantes = ['alejandro-cuevas']
+
 #participantes_wkl = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
+participantes_wkl = ['juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
 path_clusters = path + '/clusters/' + str(t) + '/'
 
-for sujeto in participantes:
-    '''
-    wkl = False
-    if any(sujeto in s for s in participantes_wkl):
-        print(sujeto)
-        wkl = True
-    '''
+#participantes_wkl = ['camila-socias']
+
+for sujeto in participantes_wkl:
+    
     print(sujeto)
+    pupila = False
+    if any(sujeto in s for s in participantes_wkl):
+        print('pupila  ' + sujeto)
+        pupila = True
+    
+    
     path_ventanas = path + '/sujetos/' + sujeto + '/ventanasU/'
     listaVentanas = fn.listaVent(sujeto, '/ventanasU/' + str(t) + '/')
     
@@ -82,7 +88,7 @@ for sujeto in participantes:
         df = pd.concat([df_act, df_val, df_ar, ccs, ccs_eeg_ar, ccs_eeg_val], ignore_index=True, axis = 1) #df_wkl
         df.columns=['act', 'val', 'ar'] + list(ccs.columns) + c_ar + c_val #, 'wkl']
     
-    path_carpeta = fn.makedir2(path, 'hernan/emociones/' + sujeto)
+    path_carpeta = fn.makedir2(path, 'hernan/wkl/' + sujeto)
     
     if df.isnull().values.any():
         print(sujeto + 'hay nans en ccs?')
@@ -97,7 +103,7 @@ for sujeto in participantes:
     vent = 0
     
     for ventana in ventanas_buenas:
-        path_carpeta = fn.makedir2(path, 'hernan/emociones/' + sujeto + '/' + str(vent))
+        path_carpeta = fn.makedir2(path, 'hernan/wkl/' + sujeto + '/' + str(vent))
         with open(path_ventana + str(ventana[0]), 'rb') as f:
             lista_ventana = pickle.load(f)
            
@@ -110,14 +116,37 @@ for sujeto in participantes:
         if any(x == 0 for x in [ppg.size, temp.size, eeg.size, ecg.size, gsr.size, eyeT.size]):
             print("ventana nula = " + vent)
             break
-
+        
+        i_peaks = ecg['tiempo_peaks'].nonzero()
+        tpo_peaks = np.array(ecg['tiempo_peaks'])
+        peaks = np.array(ecg['peaks'])
+        tpo_peaks = tpo_peaks[i_peaks]
+        hr, ts_hr = cc.peaks_getHR(tpo_peaks, show = False)
+        df_hr = pd.DataFrame({'hr':list((hr).reshape(-1,)), 'tpo':list((ts_hr).reshape(-1,))})
+        
+        if pupila:
+           
+            diametro, tpo = cc.diametroPupila_(eyeT, show = False)# - usarlo? poca info en algunas medidas
+            df_pupila = pd.DataFrame({'pupila': list(diametro), 'tiempo': list(tpo)})
+        
+            if any(x == 0 for x in [df_pupila.size, df_hr.size]):
+                print("hr o pupila  nulo = " + str(vent))
+                break
+            df_pupila.to_csv(path_carpeta + 'pupila.csv')
+        
+        if any(x == 0 for x in [df_hr.size]):
+            print("hr nulo = " + vent)
+            break
+        
         ppg.to_csv(path_carpeta + 'ppg.csv')
         temp.to_csv(path_carpeta + 'temp.csv')
         eeg.to_csv(path_carpeta + 'eeg.csv')
         ecg.to_csv(path_carpeta + 'ecg.csv')
         gsr.to_csv(path_carpeta + 'gsr.csv')
+        df_hr.to_csv(path_carpeta + 'hr.csv')
         
         vent+=1
+        
       
     '''
     borrador = df[df['act'].str.contains("borrador_")]

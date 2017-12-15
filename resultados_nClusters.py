@@ -49,7 +49,8 @@ for sujeto in participantes:
     final =  collections.Counter(etiquetas.values.ravel())
     print('numero final de clases: ' + str(len(final)))
     clases_final.append(len(final))
-    
+'''   
 df = pd.DataFrame({'n_original': clases_original, 'n_final': clases_final})
 path_resultados = path + '/resultados/' + str(t) + '/'
 df.to_pickle(path_resultados + 'nClases_wkl.pkl')
+'''
