@@ -30,9 +30,9 @@ warnings.filterwarnings('ignore')
 
 participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
-participantes = ['roberto-rojas']
+#participantes = ['roberto-rojas']
 path_resultados = fn.makedir2(path, 'resultados/' + str(t) )
-clasificaciones = [ 'svmRbf_10']
+clasificaciones = [ 'fijacionesSacadas']
 
 c_acc = [s + '_acc' for s in clasificaciones]
 c_acc_std = [s + '_accStd' for s in clasificaciones]
@@ -59,7 +59,7 @@ i=0
 for sujeto in participantes:
     print('\x1b[1;45m' + str(sujeto) +'\x1b[0m')
     
-    '''
+    
     path_ccs = path+ '/sujetos/' + sujeto + '/caracteristicas/' + str(t) + '/'
     
     ccs = pd.read_pickle(path_ccs + 'ccs.pkl')
@@ -69,15 +69,17 @@ for sujeto in participantes:
     ccs_wkl =  pd.concat([ccs_wkl, ccs_eeg], axis=1)
     path_etiqueta = path +'/sujetos/'+ sujeto + '/etiquetas-wklPupila_' + str(t) + '.pkl' 
     etiquetasWkl = pd.read_pickle(path_etiqueta)
-    '''      
+          
     resultados = []
-
-    path_df = path + '/dosClustersWKL/' + sujeto + '_ccsEt.pkl'
-    df = pd.read_pickle(path_df)
     
-    etiquetas = df['etiquetas']
-    caracteristicas = df.drop(['etiquetas'], axis = 1)
+    #path_df = path + '/dosClustersWKL/' + sujeto + '_ccsEt.pkl'
+    #df = pd.read_pickle(path_df)
+    
+    #etiquetas = df['etiquetas']
+    #caracteristicas = df.drop(['etiquetas'], axis = 1)
 
+    etiquetas = etiquetasWkl
+    caracteristicas = ccs_wkl[['numFijaciones', 'numSacadas']]
     
     caracteristicas.reset_index(drop = True, inplace = True) #tengan mismos indices - partan de 0 hasta len
     etiquetas.reset_index(drop = True, inplace = True)
@@ -131,6 +133,8 @@ for sujeto in participantes:
     i +=1
     
 df_resultados = pd.DataFrame(matrix, columns = clmn)
+
+print(df_resultados.mean())
 
 #df_resultados.to_pickle(path_resultados + 'arousal_clasificadores_eegSeleccion.pkl')
 #m = df_resultados.filter(like='_acc') seleccionar maximo y bla
