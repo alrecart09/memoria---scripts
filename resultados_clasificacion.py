@@ -38,10 +38,10 @@ def get_metricas_Mejorclasificador(df, clasificador):
 #como le meto lo multiclase??
     
 #resultados clasificacion
-t =5
+t =2
 path = os.path.dirname(os.path.realpath(__file__))
 
-'''
+
 #cargar resultados
 path_resultados = path + '/resultados/' + str(t) + '/'
 
@@ -66,24 +66,35 @@ if t == 5: #hay dos partes
     wkl2 = pd.read_pickle(path_resultados + 'wkl_clasificadores_eegSeleccionDesdeRR.pkl')
     
     wkl = pd.concat([wkl1, wkl2], ignore_index= True)
+    wkl = wkl*100
     
     arousal = arousal[:53] #eliminar espacios de gente con una clase
     valencia = valencia[:48]
+    valencia = valencia*100
+    arousal = arousal*100
     
 else:
     wkl = pd.read_pickle(path_resultados + 'wkl_clasificadores_eegSeleccion.pkl')
-'''
+    wkl = wkl*100
+    valencia = valencia*100
+    arousal = arousal*100
 
-wkl = pd.read_pickle(path + '/resultados/dosClusterWKL.pkl')
-#wkl = wkl_
-
-#val_prom = valencia.mean()
-#ar_prom = arousal.mean()
+wkl = pd.read_pickle(path + '/resultados/5/motivacion.pkl')
+wkl = wkl[0:50]
+#wkl = wkl*100
+val_prom = valencia.mean()
+ar_prom = arousal.mean()
 wkl_prom = wkl.mean()
 
-#val_knn, val_svm, val_ann = get_clasificador(val_prom)
-#ar_knn, ar_svm, ar_ann = get_clasificador(ar_prom)
+#val_std = valencia.std()
+#ar_std = arousal.std()
+#wkl_std = wkl.std()
+
+val_knn, val_svm, val_ann = get_clasificador(val_prom)
+ar_knn, ar_svm, ar_ann = get_clasificador(ar_prom)
 wkl_knn, wkl_svm, wkl_ann = get_clasificador(wkl_prom)
+
+
 
 #en torno a que maximizo? f1, acc?
 #max_f1_val_knn, max_f1_val_svm, max_f1_val_ann = get_maximo(val_knn, val_svm, val_ann, '_f1')

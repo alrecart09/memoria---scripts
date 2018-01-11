@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 #para mejores ventanas/Clasificadores - % clasificación por clase
 
-t =5
+t =2
 
 def get_infoClasificador(df, clasificador, nClases):
     df = df.filter(like=clasificador, axis = 1)
@@ -27,12 +27,15 @@ def getPorcentaje_Clases(df_datos, nMaxClases):
     num = 0
     for i in range(2, nMaxClases + 1):
         df_acc = df_datos[df_datos.nClases == i]
+        df_std = df_acc
         if df_acc.empty:
             print('no hay clase ' + str(i))
             num+=1
             continue
         df_acc = df_acc.mean()
-        print(str(df_acc))
+        df_std = df_std.std()
+        #print(str(df_acc))
+        print(str(df_std*100))
         print('  ') 
         matriz[num:] =np.array(df_acc[1:])
         num+=1

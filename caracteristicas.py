@@ -139,7 +139,7 @@ def diametroPupila_(eyeTracker, show = False):
     valid = validez[~np.isnan(validez)]     
     valid = sum(valid)/valid.size #promedio de validez de no NANs
     
-    tiempo = np.array(eyeTracker['Timestamps_UNIX']) #referencial
+    tiempo = np.array(eyeTracker['Timestamps_UNIX']) #referencial - cambiar por Timestamps_UNIX
     #tiempo_ = tiempo - tiempo[0] 
     
     #sacadas como NAN para dp interpolar 

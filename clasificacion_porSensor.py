@@ -87,8 +87,8 @@ participantes_wkl = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'feli
 #participantes = ['ivania-valenzuela']
 
 valencia = False
-arousal = True
-wkl = False
+arousal = False
+wkl = True
 
 gsr = True
 ppg = True
@@ -107,7 +107,7 @@ elif arousal:
 else: #wkl
     eyeT = False 
     participantes = participantes_wkl
-    sensores = ['eeg', 'temp', 'gsr', 'ppg', 'ecg']
+    sensores = ['fijaciones', 'eeg', 'temp', 'gsr', 'ppg', 'ecg']
     t=2
     
 c_acc = [s + '_acc' for s in sensores]
@@ -138,17 +138,24 @@ for sujeto in participantes:
     pupila = False
     print('\x1b[1;45m' + str(sujeto) +'\x1b[0m')
     
-    if any(sujeto in s for s in participantes_wkl):
-        pupila = True
+    #if any(sujeto in s for s in participantes_wkl):
+    #    pupila = True
 
-    path_ccsA = path +'/caracteristicas_ar/'+ str(t) + '/' 
-    path_ccsV = path +'/caracteristicas_val/'+ str(t) + '/' 
-    path_ccs = path+ '/sujetos/' + sujeto + '/caracteristicas/' + str(t) + '/'
     
-    ccs = pd.read_pickle(path_ccs + 'ccs.pkl')
+    resultados = []
     
-    path_etiquetas = path +'/clusters/'+ str(t) + '/'
+    path_df = path + '/dosClustersWKL/' + sujeto + '_ccsEt.pkl'
+    df = pd.read_pickle(path_df)
     
+    etiquetas = df['etiquetas']
+    caracteristicas = df.drop(['etiquetas'], axis = 1)
+   
+    caracteristicas.reset_index(drop = True, inplace = True) #tengan mismos indices - partan de 0 hasta len
+    etiquetas.reset_index(drop = True, inplace = True)
+    
+    ccs = caracteristicas
+    
+    '''
     if wkl:
         eeg =  pd.read_pickle(path_ccs + 'ccs_wkl.pkl')
         #ccs_wkl = ccs.drop(['promPupila', 'varPupila'], axis = 1)
@@ -165,12 +172,23 @@ for sujeto in participantes:
         #ccs_valencia = ccs.drop(['promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin'], axis = 1) #eliminar HR, PPG y ECG 
         #ccs_valencia = pd.concat([ccs_valencia, eeg], axis = 1)
         etiquetas = pd.read_pickle(path_etiquetas + sujeto + '_etiquetas-valenciaHR.pkl') 
+    '''
     
-    ccs_eeg = eeg
+    ccs_eeg = ccs[['e_totalAF3_delta', 'e_totalAF7_delta',
+       'e_totalF3_delta', 'e_totalFC5_delta', 'e_totalFC6_delta',
+       'e_totalF4_delta', 'e_totalF8_delta', 'e_totalAF4_delta',
+       'entropiaNorm_AF3_delta', 'entropiaNorm_F7_delta',
+       'entropiaNorm_F3_delta', 'entropiaNorm_FC5_delta',
+       'entropiaNorm_FC6_delta', 'entropiaNorm_F4_delta',
+       'entropiaNorm_F8_delta', 'entropiaNorm_AF4_delta', 'stdAF3_delta',
+       'stdF7_delta', 'stdF3_delta', 'stdFC5_delta', 'stdFC6_delta',
+       'stdF4_delta', 'stdF8_delta', 'stdAF4_delta']]
     ccs_gsr = ccs[['gsrAcum', 'promGSR', 'powerGSR', 'maxFasica', 'numPeaksFasica', 'promFasica']]
     ccs_ppg = ccs[['ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin']]
     ccs_temp = ccs[['pendienteTemp', 'promTemp', 'medianaTemp']]
     ccs_ecg = ccs[['promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD']]
+    ccs_fijacion = ccs[['numFijaciones', 'numSacadas']]
+    
     
     if pupila:
         ccs_eyeT = ccs[['promPupila', 'varPupila', 'numSacadas', 'numFijaciones']]
@@ -185,6 +203,7 @@ for sujeto in participantes:
     ccs_temp.reset_index(drop = True, inplace = True)
     ccs_ecg.reset_index(drop = True, inplace = True)
     ccs_eyeT.reset_index(drop = True, inplace = True)
+    ccs_fijacion.reset_index(drop = True, inplace = True)
     etiquetas.reset_index(drop = True, inplace = True)
     
     cuenta = collections.Counter(etiquetas.values.ravel())
@@ -204,6 +223,7 @@ for sujeto in participantes:
             ccs_temp.drop(list(indices))
             ccs_ecg.drop(list(indices))
             ccs_eyeT.drop(list(indices))
+            ccs_fijacion.drop(list(indices))
             etiquetas = etiquetas.drop(list(indices))
             
             ccs_eeg.reset_index(drop = True, inplace = True)
@@ -212,6 +232,7 @@ for sujeto in participantes:
             ccs_temp.reset_index(drop = True, inplace = True)
             ccs_ecg.reset_index(drop = True, inplace = True)
             ccs_eyeT.reset_index(drop = True, inplace = True)
+            ccs_fijacion.reset_index(drop = True, inplace = True)
             etiquetas.reset_index(drop = True, inplace = True)
             #print('borre clase ' + str(clase))
     
@@ -230,6 +251,7 @@ for sujeto in participantes:
     ccs_temp = np.array(ccs_temp)
     ccs_ecg = np.array(ccs_ecg)
     ccs_eyeT = np.array(ccs_eyeT)
+    ccs_fijacion = np.array(ccs_fijacion)
     etiquetas = etiquetas.values.ravel()
     
     
@@ -238,8 +260,10 @@ for sujeto in participantes:
     elif valencia:
         clasificador = KNeighborsClassifier(n_neighbors = 3) #valencia
     else: #wkl
-        clasificador = SVC(C=10, kernel = 'rbf')#wkl
-    
+        clasificador = SVC(C=100, kernel = 'linear')#wkl
+    print('fijaciones')
+    accuracy, precision, recall, f1 = clsf.funcion_clasificar(ccs_fijacion, etiquetas, clasificador, 'clasificador', len(repeticion), num_trials=num_repeticiones)
+    clsf.guardar_resultados(accuracy, precision, recall, f1, resultados)    
     #clasificacion eeg
     print(' eeg')
     accuracy, precision, recall, f1 = clsf.funcion_clasificar(ccs_eeg, etiquetas, clasificador, 'clasificador', len(repeticion), num_trials=num_repeticiones)
@@ -280,6 +304,6 @@ if valencia:
 elif arousal:
     df_resultados.to_pickle(path_resultados + 'arousal_clasificadores_porSensor.pkl')
 else: #wkl
-    df_resultados.to_pickle(path_resultados + 'wkl_clasificadores_porSensor.pkl')
+    df_resultados.to_pickle(path_resultados + 'wkl_clasificadores_porSensor_dosClusters.pkl')
    
 #m = df_resultados.filter(like='_acc') seleccionar maximo y bla

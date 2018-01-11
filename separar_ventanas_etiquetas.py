@@ -43,35 +43,31 @@ for sujeto in participantes:
 
 #sujeto = 'Pia-Cortes' 
     print(sujeto)
-    nombre = '/sujetos/' + sujeto + '/'
-    path_ = path + nombre
-    path__ = path_ + 'preproc/'
-    path_ventanas = fn.makedir(sujeto, path, 'ventanas')
+    path__ = path + '/señales_baseline/' + sujeto + '/'
+    path_ventanas = fn.makedir2(path__ , 'ventanas')
     
     señales = ['ppg', 'temp', 'eeg', 'ecg','gsr', 'eyeTracker']
     tiempos = ['ppg_tiempo', 'temp_tiempo', 'eeg_tiempo', 'ecg_tiempo', 'gsr_tiempo', 'eyeTracker_tiempo']
     
     ##cargar señales
-    eyeTracker = pd.read_pickle(path_ + sujeto + '_EyeTracker.pkl')
+    eyeTracker = pd.read_pickle(path__ + 'eyeTracker.pkl')
     
     ppg = pd.read_pickle(path__ + 'ppg.pkl')
     #ppgPeaks = pd.read_pickle(path__ + 'ppgPeaks.pkl')
     ppg_tiempo = ppg['tiempo']
     #ppgPeaks_tiempo = ppgPeaks['tiempo_peaks']
     
-    temp = pd.read_pickle(path__ + 'tempPrep.pkl')
+    temp = pd.read_pickle(path__ + 'temp.pkl')
     temp_tiempo = temp['tiempo']
     
-    eeg = pd.read_pickle(path__ + 'eegPrep.pkl')
+    eeg = pd.read_pickle(path__ + 'eeg.pkl')
     eeg_tiempo = eeg['time']
     
     ecg = pd.read_pickle(path__ + 'ecg.pkl')
     ecg_tiempo = ecg['tiempo']
-    #ecgPeaks = pd.read_pickle(path__ + 'ecgPeaks.pkl' )
-    #ecgPeaks_tiempo = ecgPeaks['tiempo_peaks']
     
     #gsr 
-    gsr = pd.read_pickle(path_ + '/GSR/gsrLedalab.pkl')  
+    gsr = pd.read_pickle(path__ + '/GSR/gsrLedalab.pkl')  
     gsr_tiempo = np.array(gsr['time'])*1000 #ms
     gsr['time'] = gsr_tiempo
     
@@ -79,7 +75,7 @@ for sujeto in participantes:
     timestamps_eyeTracker = eyeTracker['LocalTimeStamp'] #en hh:mm:ss.ms(3)
     
     
-    eyeTracker_tiempo = pd.read_pickle(path_ + 'unix_et') # =fn.timeStampEyeTracker(date, timestamps_eyeTracker)
+    eyeTracker_tiempo = pd.read_pickle(path + '/sujetos/' + sujeto  + '/unix_et') # =fn.timeStampEyeTracker(date, timestamps_eyeTracker)
     eyeTracker['Timestamps_UNIX'] = eyeTracker_tiempo
     #eyeTracker_tiempo.to_pickle(path_ + 'unix_et') #en siguientes ventanas solo abrirlo
     indices = eyeTracker['StudioEventIndex'] #indices de todos los eventos
@@ -114,6 +110,8 @@ for sujeto in participantes:
     r_i=  timestamps_eyeTracker[indices_etiquetas[0]] #indice donde parte la relajacion
     r_f=  timestamps_eyeTracker[indices_etiquetas[1]]
     relajacion_i, relajacion_f = timestamps(date, r_i, r_f) #timestamps de corte para relajacion
+    
+    
     
     c_i=  timestamps_eyeTracker[indices_etiquetas[2]]
     c_f=  timestamps_eyeTracker[indices_etiquetas[3]]

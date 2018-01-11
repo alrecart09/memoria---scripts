@@ -21,9 +21,10 @@ participantes = fn.listaParticipantes()[0]
 
 
 #peaks gsr
+
 for sujeto in participantes:
     print(sujeto)
-    gsr = path + '/sujetos/' + sujeto + '/GSR/' + sujeto + '_GSRLedalab.mat'
+    gsr = path + '/señales_baseline/' + sujeto + '/GSR/GSRLedalab.mat'
     dict_gsr = scipy.io.loadmat(gsr)
     
     analisis = dict_gsr['analysis']
@@ -69,7 +70,7 @@ for sujeto in participantes:
             peaks.append(0)
     
     df_gsr = pd.DataFrame({'conductance': conductance, 'time': tiempo, 'fasica': fasica, 'peaks_fasica': peaks, 'tiempo_peaks': peaks_t})
-    pd.to_pickle(df_gsr, path + '/sujetos/' + sujeto + '/GSR/' + 'gsrLedalab.pkl')
+    pd.to_pickle(df_gsr, path + '/señales_baseline/' + sujeto + '/GSR/' + 'gsrLedalab.pkl')
 
 
 '''

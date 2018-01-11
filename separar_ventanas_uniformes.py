@@ -29,10 +29,10 @@ for sujeto in participantes:
     print(sujeto)
     num = 0 #nombre de cada archivo
     
-    path_ventana = path +'/sujetos/'+ sujeto + '/ventanas/'
-    path_ventanasU = fn.makedir(sujeto, path, 'ventanasU/' + str(t))
+    path_ventana = path +'/señales_baseline/'+ sujeto + '/ventanas/'
+    path_ventanasU = fn.makedir2(path +'/señales_baseline/'+ sujeto , 'ventanasU/' + str(t))
 
-    listaVentanas = fn.listaVent(sujeto, '/ventanas/')
+    listaVentanas = fn.listaVent(sujeto, '/ventanas/') #igual para con y sin baseline
 
     for ventana in listaVentanas[:-3]:
     

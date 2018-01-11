@@ -21,7 +21,13 @@ wkl = pd.read_pickle(path_resultados + 'wkl_clasificadores_porSensor.pkl')
 valencia = valencia[0:48]
 arousal = arousal[0:52]
 
+wkl = pd.read_pickle(path_resultados + 'wkl_clasificadores_porSensor.pkl')
+
 val_prom = valencia.mean()
 ar_prom = arousal.mean()
 wkl_prom = wkl.mean()
+
+val_std =(valencia*100).std()
+ar_std = (arousal*100).std()
+wkl_std = (wkl*100).std()
 

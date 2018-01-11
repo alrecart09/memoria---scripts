@@ -20,7 +20,7 @@ import pickle
 #warnings.simplefilter("error")
  
 path = os.path.dirname(os.path.realpath(__file__))
-t =2 #wkl
+t =5 #wkl
 
 participantes = fn.listaParticipantes()[0]
 #participantes = participantes[24:] #falta8, 24
@@ -39,6 +39,7 @@ ccs_mot_ = ['conjunto']
 
 
 for sujeto in participantes:
+    
     path_ccsWkl = fn.makedir2(path, 'indiceMotivacion/' + str(t))
     ccs_ = ['numFijaciones', 'numSacadas', 'promPupila', 'varPupila', 'promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'pendienteTemp', 'promTemp', 'medianaTemp', 'numPeaksFasica', 'maxFasica', 'promFasica', 'gsrAcum', 'promGSR', 'powerGSR', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin']
     print('\x1b[1;45m' + str(sujeto) +'\x1b[0m')
@@ -96,8 +97,10 @@ for sujeto in participantes:
 
         #eeg - bandas de frec
         
-        eeg_data = eeg.drop('time',axis=1)
-
+        #eeg_data = eeg.drop(['AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'P8', 'T8', 'TC6',
+        #'F4', 'F8', 'AF4','time'],axis=1)
+        eeg_data = eeg.drop('time', axis = 1)
+       
         #eeg_emociones = eeg_data
         alpha, beta, theta= cc.get_PSD_bandas_alfaBetaTheta(eeg_data, nchannels =eeg_data.columns, fs = 128) #power
                 
@@ -141,7 +144,7 @@ for sujeto in participantes:
         tpo_peaks = tpo_peaks[i_peaks]
         hr, ts_hr = cc.peaks_getHR(tpo_peaks, show = False)
 
-        if hr.size== 0:
+        if hr.size == 0:
             prom_hr = np.nan
             std_hr = np.nan
             rms_hr = np.nan
