@@ -32,21 +32,56 @@ def cortar_df(df, df_tpo, timestamp_i, timestamp_f):
 
 path = os.path.dirname(os.path.realpath(__file__))
 
-participantes = fn.listaParticipantes()[0]
-#participantes = ['diego-gonzalez']
+#participantes = fn.listaParticipantes()[0]
+participantes = ['alejandro-cuevas']
+
+participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'catalina-astorga', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
+
+
 for sujeto in participantes:
     print(sujeto)
+    
     path_ = path + '/sujetos/' + sujeto + '/'
     
     path__ = path_ + 'preproc/'
     path_ventana = path_ + '/ventanas/'
        
-    with open(path_ventana + 'relajacion.pkl', 'rb') as f:
-        lista_relajacion = pickle.load(f)
-       
-    timestamp_inicial = lista_relajacion[0][3] + 1000 #ms
+    eyeT_baseline = pd.read_pickle(path + '/antonia_baseline/' + sujeto + '.pkl')
+    
+    indices = eyeT_baseline['StudioEventIndex'] #indices de todos los eventos
+    etiquetas_evento = eyeT_baseline['StudioEventData'].dropna() #sin nans
+    tipo_evento = eyeT_baseline['StudioEvent'].dropna()
+    timestamps_eyeTracker = eyeT_baseline['LocalTimeStamp'] #en hh:mm:ss.ms(3)
+
+    indices_eventos = []
+    
+    #recuperar indices de etiquetas
+    indices_tipo = tipo_evento.index.values
+    indices_etiquetas = etiquetas_evento.index.values
+    
+    
+    for i in range(0, tipo_evento.shape[0]):
+        if tipo_evento[indices_tipo[i]] == 'Default':
+            indices_eventos.append(indices_tipo[i])
+        
+    etiquetas_evento = etiquetas_evento[indices_eventos] #etiquetas solo de eventos que yo anote
+    
+    if sujeto == 'boris-suazo':
+        etiquetas_evento = etiquetas_evento.drop(38365)
+    
+    indices_etiquetas = etiquetas_evento.index.values   
+
+    #etiquetas estandar para todos
+    indice = [i for i, x in enumerate(etiquetas_evento) if x == 'baseline'][0]
+    print(indice)
+    baseline = timestamps_eyeTracker[indices_etiquetas[indice]] #indice donde parte la relajacion
+    print(indices_etiquetas[indice])
+    date = eyeT_baseline['RecordingDate'][1]
+    baseline_timestamp = fn.toUnix(date, baseline)
+     
+    timestamp_inicial = baseline_timestamp #ms
     timestamp_final = timestamp_inicial + 500 #ms
-       
+     
     señales = ['ppg', 'temp', 'eeg', 'ecg','gsr', 'eyeTracker']
     tiempos = ['ppg_tiempo', 'temp_tiempo', 'eeg_tiempo', 'ecg_tiempo', 'gsr_tiempo', 'eyeTracker_tiempo']
     

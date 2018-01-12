@@ -39,6 +39,9 @@ path = os.path.dirname(os.path.realpath(__file__))
 
 participantes = fn.listaParticipantes()[0]
 
+participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'catalina-astorga', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
+
+
 for sujeto in participantes:
 
 #sujeto = 'Pia-Cortes' 

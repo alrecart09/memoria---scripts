@@ -24,6 +24,9 @@ minimo = 0.5 #segundos - minimo para ser ventana
 cant_señales = 6 #ppg, temp, eeg, ecg, gsr, eyet
 fs = [120, 50, 128, 100, 10, 120] #ppg, temp, eeg, ecg, gsr, eyeT
 
+participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'catalina-astorga', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
+
+
 for sujeto in participantes:
 #sujeto = 'pia-cortes' 
     print(sujeto)

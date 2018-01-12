@@ -126,7 +126,7 @@ def diametroPupila_(eyeTracker, show = False):
             prom = float((datosPupilaDer[index] + datosPupilaIzq[index])/2)
             diametroPupila.append(prom)
             validez.append(der)
-        elif izq<der: #derecha es mas confiable
+        elif izq>der: #derecha es mas confiable
             diametroPupila.append(datosPupilaDer[index])
             validez.append(der)
         else: #izquierda es mas confiable

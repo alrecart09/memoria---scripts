@@ -19,10 +19,10 @@ import fn_clasificar as clsf
 
 ##CAMBIAR nombre ccs y etiquetas, nombre archivo a guardar
 
-path = os.path.dirname(os.path.realpath(__file__))
+path = '/Volumes/ADATA CH11'
 
 t = 2
-participantes = fn.listaParticipantes()[0]
+#participantes = fn.listaParticipantes()[0]
 
 num_repeticiones = 5
 warnings.filterwarnings('ignore') 
@@ -31,6 +31,7 @@ warnings.filterwarnings('ignore')
 #participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
 #participantes = ['ivania-valenzuela']
+participantes = ['todos']
 path_resultados = fn.makedir2(path, 'resultados/' + str(t) )
 clasificaciones = ['knn_1', 'knn_3', 'knn_5', 'knn_10', 'svmlin_1', 'svmlin_10', 'svmlin_100', 'svmPoli2_1', 'svmPoli3_1', 'svmPoli5_1', 'svmPoli2_10', 'svmPoli3_10', 'svmPoli5_10', 'svmPoli2_100', 'svmPoli3_100', 'svmPoli5_100', 'svmSigm_1', 'svmSigm_10', 'svmSigm_100', 'svmRbf_1', 'svmRbf_10', 'svmRbf_100', 'ann:2_0.001', 'ann:2_0.01', 'ann:2_0.1', 'ann_0.001', 'ann_0.01', 'ann_0.1']
 
@@ -60,30 +61,33 @@ for sujeto in participantes:
     print('\x1b[1;45m' + str(sujeto) +'\x1b[0m')
     
 
-    path_ccsA = path +'/caracteristicas_ar/'+ str(t) + '/' 
-    path_ccsV = path +'/caracteristicas_val/'+ str(t) + '/' 
-    path_ccs = path+ '/sujetos/' + sujeto + '/caracteristicas/' + str(t) + '/'
+    #path_ccsA = path +'/caracteristicas_ar/'+ str(t) + '/' 
+    #path_ccsV = path +'/caracteristicas_val/'+ str(t) + '/' 
+    #path_ccs = path+ '/señales_baseline/' + sujeto + '/caracteristicas/' + str(t) + '/'
     
-    ccs = pd.read_pickle(path_ccs + 'ccs.pkl')
-    ccs_eegA = pd.read_pickle(path_ccsA + sujeto + '_ccs_arousal.pkl')
-    ccs_eegV = pd.read_pickle(path_ccsV + sujeto + '_ccs_valencia.pkl')
+    path_ccs = path +'/señales_baseline/ccs_todosWKL.pkl'
+    
+    ccs = pd.read_pickle(path_ccs)
+    #ccs = pd.read_pickle(path_ccs + 'ccs.pkl')
+    #ccs_eegA = pd.read_pickle(path_ccsA + sujeto + '_ccs_arousal.pkl')
+    #ccs_eegV = pd.read_pickle(path_ccsV + sujeto + '_ccs_valencia.pkl')
     
     #ccs_eeg =  pd.read_pickle(path_ccs + 'ccs_wkl.pkl')
-    #ccs_wkl = ccs.drop(['promPupila', 'varPupila'], axis = 1)
+    ccs_wkl = ccs.drop(['promPupila', 'varPupila'], axis = 1)
     #ccs_wkl['etiquetas'] = etiquetas_wkl
     #ccs_wkl =  pd.concat([ccs_wkl, ccs_eeg], axis=1)
        
     ccs_arousal = ccs.drop(['gsrAcum', 'promGSR', 'powerGSR', 'maxFasica', 'numPeaksFasica', 'promFasica'], axis = 1)#eliminar GSR
     ccs_valencia = ccs.drop(['promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin'], axis = 1) #eliminar HR, PPG y ECG 
     
-    ccs_arousal = pd.concat([ccs_arousal, ccs_eegA], axis = 1)
-    ccs_valencia = pd.concat([ccs_valencia, ccs_eegV], axis = 1)
+    #ccs_arousal = pd.concat([ccs_arousal, ccs_eegA], axis = 1)
+    #ccs_valencia = pd.concat([ccs_valencia, ccs_eegV], axis = 1)
     resultados = []
 
-    path_etiquetas = path +'/clusters/'+ str(t) + '/'
+    path_etiquetas = path + '/clusters_todosWKL/' + str(t) 
     
-    caracteristicas = ccs_valencia #ccs_a, ccs_v
-    etiquetas = pd.read_pickle(path_etiquetas + sujeto + '_etiquetas-valenciaHR.pkl') #_etiquetas-arousalGSR.pkl
+    caracteristicas = ccs_wkl #ccs_a, ccs_v
+    etiquetas = pd.read_pickle(path_etiquetas + '/' + sujeto + 'clusters.pkl') #_etiquetas-arousalGSR.pkl
     
     caracteristicas.reset_index(drop = True, inplace = True) #tengan mismos indices - partan de 0 hasta len
     etiquetas.reset_index(drop = True, inplace = True)
@@ -197,5 +201,5 @@ for sujeto in participantes:
     
 df_resultados = pd.DataFrame(matrix, columns = clmn)
 
-df_resultados.to_pickle(path_resultados + 'arousal_clasificadores_eegSeleccion.pkl')
+df_resultados.to_pickle(path_resultados + 'todos_wkl.pkl')
 #m = df_resultados.filter(like='_acc') seleccionar maximo y bla

@@ -16,7 +16,7 @@ import pickle
 
 #warnings.simplefilter("error")
  
-path = os.path.dirname(os.path.realpath(__file__))
+path = '/Volumes/ADATA CH11'
 t = 2
 participantes = fn.listaParticipantes()[0]
 #participantes = [participantes[24]] #falta8, 24
@@ -29,7 +29,7 @@ ccs_wkl_ = ['e_totalF3_theta', 'e_totalF4_theta', 'e_totalF7_theta', 'e_totalF8_
 #ccs_arousal_ = ['e_totalP7_beta', 'e_totalP8_beta', 'cP7O2', 'cP8O1', 'cP7P8', 'cO1O2', 'b/a_AF3', 'b/a_AF4', 'b/a_F3', 'b/a_F4']
 
 
-participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
+participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'catalina-astorga', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
 
 for sujeto in participantes:
@@ -39,8 +39,8 @@ for sujeto in participantes:
     
     listaVentanas = fn.listaVent(sujeto, '/ventanasU/' + str(t) + '/')
     
-    path_ventana = path +'/señales_baseline/'+ sujeto + '/ventanasU/' + str(t) +  '/'    
-    path_ccs = fn.makedir2(path +'/señales_baseline/'+ sujeto, 'caracteristicas/' + str(t) )
+    path_ventana = '/Volumes/ADATA CH11/señales_baseline/' + sujeto + '/ventanasU/' + str(t) +  '/'    
+    path_ccs = fn.makedir2('/Volumes/ADATA CH11/señales_baseline/' + sujeto, 'caracteristicas/' + str(t) )
     
     #normalizar GSR
     path_ = path + '/señales_baseline/' + sujeto 
@@ -285,10 +285,6 @@ for sujeto in participantes:
         #ccs_arousal = ccs_arousal[:-vent_nulas]
         #ccs_valenc = ccs_valenc[:-vent_nulas]
 
-
-    ccs_wkl = pd.DataFrame(matriz_eeg_wkl)
-    #ccs_valenc = pd.DataFrame(matriz_eeg_valencia)
-    #ccs_arousal = pd.DataFrame(matriz_eeg_arousal)
     
     #eliminar filas con algun valor nan en HR - uno o dos latidos (ventanas más cortas)
     indices_nullHR = ccs['AVNN'].index[ccs['AVNN'].apply(np.isnan)]

@@ -40,7 +40,7 @@ def diametroPupila_(eyeTracker, show = False):
             prom = float((datosPupilaDer[index] + datosPupilaIzq[index])/2)
             diametroPupila.append(prom)
             validez.append(der)
-        elif izq<der: #derecha es mas confiable
+        elif izq>der: #derecha es mas confiable
             diametroPupila.append(datosPupilaDer[index])
             validez.append(der)
         else: #izquierda es mas confiable
@@ -98,11 +98,13 @@ def z_score(df):
     return (df-df.mean())/df.std(ddof=0)
             
 path = os.path.dirname(os.path.realpath(__file__))
-participantes_wkl = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
+participantes_wkl = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'catalina-astorga', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
 participantes = fn.listaParticipantes()[0]
 
-participantes = ['alejandro-cuevas']
+participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'catalina-astorga', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
+#falta ivania valenzuela 
+
 for sujeto in participantes:
     print(sujeto)
     
