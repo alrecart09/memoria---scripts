@@ -32,7 +32,7 @@ participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-s
 
 #participantes = ['roberto-rojas']
 path_resultados = fn.makedir2(path, 'resultados/' + str(t) )
-clasificaciones = [ 'fijacionesSacadas']
+clasificaciones = [ 'SVM']
 
 c_acc = [s + '_acc' for s in clasificaciones]
 c_acc_std = [s + '_accStd' for s in clasificaciones]
@@ -64,7 +64,7 @@ for sujeto in participantes:
     
     ccs = pd.read_pickle(path_ccs + 'ccs.pkl')
     
-    ccs_eeg =  pd.read_pickle(path + '/caracteristicas_wkl/wkl_nuevasEEG_Zarjam/' + sujeto+ '_ccsWkl.pkl')
+    ccs_eeg =  pd.read_pickle(path_ccs + 'ccs_wkl.pkl')
     ccs_wkl = ccs.drop(['promPupila', 'varPupila'], axis = 1)
     ccs_wkl =  pd.concat([ccs_wkl, ccs_eeg], axis=1)
     path_etiqueta = path +'/sujetos/'+ sujeto + '/etiquetas-wklPupila_' + str(t) + '.pkl' 
@@ -79,7 +79,7 @@ for sujeto in participantes:
     #caracteristicas = df.drop(['etiquetas'], axis = 1)
 
     etiquetas = etiquetasWkl
-    caracteristicas = ccs_wkl[['numFijaciones', 'numSacadas']]
+    caracteristicas = ccs_wkl
     
     caracteristicas.reset_index(drop = True, inplace = True) #tengan mismos indices - partan de 0 hasta len
     etiquetas.reset_index(drop = True, inplace = True)
@@ -116,7 +116,7 @@ for sujeto in participantes:
 
     #SVM
     print('SVM')
-    C = 10
+    C = 100
     
     print(' SVM rbf')
 

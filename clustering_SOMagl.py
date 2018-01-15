@@ -36,10 +36,10 @@ import collections
 import operator
 
 ###realizar clustering 
-#path = os.path.dirname(os.path.realpath(__file__))
-path = '/Volumes/ADATA CH11'
+path = os.path.dirname(os.path.realpath(__file__))
+#path = '/Volumes/ADATA CH11'
 
-t =2
+t = 5
 participantes = fn.listaParticipantes()[0]
 
 
@@ -48,18 +48,20 @@ participantes = fn.listaParticipantes()[0]
 #participantes = ['israfel-salazar']
 #participantes = ['manuela-diaz', 'camila-socias', 'boris-suazo']
 #participantes = ['manuela-diaz']
-#participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
+participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
-path_clusters = fn.makedir2(path, 'clusters_todosWKL/' + str(t) )
+#path_clusters = fn.makedir2(path, 'clusters/' + str(t) )
 
-participantes = ['todos']
+
+#participantes = ['todos']
 
 for sujeto in participantes:
     print(sujeto)
     
-    path_ccs = path +'/señales_baseline/ccs_todosWKL.pkl'
+    path_ccs = path +'/sujetos/' + sujeto + '/caracteristicas/' + str(t) + '/'
+    path_clusters = path  +'/sujetos/' + sujeto + '/' 
     #caracteristicas_wkl =  pd.read_pickle(path_ccs +  'ccs_wkl_' + str(t) + '.pkl')
-    caracteristicas = pd.read_pickle(path_ccs)
+    caracteristicas = pd.read_pickle(path_ccs + 'ccs.pkl')
     #valencia = pd.read_pickle(path_ccs + 'ccs_valencia.pkl')
     #arousal = pd.read_pickle(path_ccs + 'ccs_arousal.pkl')
     ccs_ = caracteristicas[['promPupila', 'varPupila']]
@@ -80,7 +82,7 @@ for sujeto in participantes:
     etiquetas_best = []
     ch__= []
     for i in range(50):
-        print(i)
+        #print(i)
         n_rows, n_columns =6,6 #cantidad de neuronas que quiero (cuan densa la zona)
         som = somoclu.Somoclu(n_columns, n_rows, gridtype='hexagonal')
         som.train(data=np.float32(data), epochs=1000)
@@ -167,7 +169,7 @@ for sujeto in participantes:
     
     #guardar etiquetas WKL
     etiquetas = pd.DataFrame(labels_elegidas)
-    etiquetas.to_pickle(path_clusters + sujeto + 'clusters.pkl')
+    etiquetas.to_pickle(path_clusters + 'etiquetas-wklPupila_' + str(t) + '.pkl')
     
 #%%
     '''   

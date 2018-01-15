@@ -34,7 +34,7 @@ participantes_wkl = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'feli
 
 path_clusters = path + '/clusters/' + str(t) + '/'
 i = 0
-clmns = ['borrador_duracion', 'intro_duracion', 'd1_duracion', 'd2_duracion', 'conclusion_duracion','escribiendo_duracion', 'noescr_duracion', 'revisando_duracion']
+clmns = ['borrador_duracion', 'intro_duracion', 'tesis_duracion', 'd1_duracion', 'd2_duracion', 'conclusion_duracion','escribiendo_duracion', 'noescr_duracion', 'revisando_duracion']
 matriz = np.empty(shape = (len(participantes), len(clmns)))
 
 for sujeto in participantes:
@@ -77,7 +77,7 @@ for sujeto in participantes:
     ventanas_buenas = ventanas_buenas.values.tolist()
     vent = 0
     duracion_ventana = []
-    '''
+    
     for ventana in ventanas_buenas:
         with open(path_ventana + str(ventana[0]), 'rb') as f:
             lista_ventana = pickle.load(f)
@@ -90,6 +90,8 @@ for sujeto in participantes:
     borrador_duracion = duracion_vent[df['act'].str.contains("borrador_")].sum()
     intro = df[df['act'].str.contains("introduccion_")]
     intro_duracion = duracion_vent[df['act'].str.contains("introduccion_")].sum()
+    tesis = df[df['act'].str.contains("tesis_")]
+    tesis_duracion = duracion_vent[df['act'].str.contains("tesis_")].sum()
     d1 = df[df['act'].str.contains("desarrollo1_")]
     d1_duracion = duracion_vent[df['act'].str.contains("desarrollo1_")].sum()
     d2 = df[df['act'].str.contains("desarrollo2_")]
@@ -105,7 +107,7 @@ for sujeto in participantes:
     revisando = df[df['act'].str.contains("_revisando")]
     revisando_duracion =  duracion_vent[df['act'].str.contains("_revisando")].sum()
     
-    lista = [borrador_duracion, intro_duracion, d1_duracion, d2_duracion, conclusion_duracion,escribiendo_duracion, noescr_duracion, revisando_duracion]
+    lista = [borrador_duracion, intro_duracion, tesis_duracion, d1_duracion, d2_duracion, conclusion_duracion,escribiendo_duracion, noescr_duracion, revisando_duracion]
     matriz[i,:] = lista
     i+=1
     #pd.to_pickle() 
@@ -122,6 +124,6 @@ resto = df_tiempos.drop(['borrador_duracion', 'revisando_duracion'], axis = 1)
 
 resto.mean()
 resto.std()
-'''
+
 
     
