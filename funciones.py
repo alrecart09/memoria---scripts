@@ -95,3 +95,6 @@ def listaVent(sujeto, folder): #lista archivos en folder '/nombre/'
         ventanas.append(files)
         break
     return ventanas[0]
+
+def deltaPorcentaje(porcentaje_i, porcentaje_f):
+    return (porcentaje_f - porcentaje_i)*100/porcentaje_i

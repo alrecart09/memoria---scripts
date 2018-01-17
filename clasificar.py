@@ -60,29 +60,35 @@ for i in range(len(clasificaciones)):
     
 matrix = np.empty(shape = (len(participantes), len(clmn)))    #len(clmn)
 i=0    
+
+sujeto = ['alejandro-cuevas']
 for sujeto in participantes:
     print('\x1b[1;45m' + str(sujeto) +'\x1b[0m')
-    
+    '''
     path_ccs = path+ '/sujetos/' + sujeto + '/caracteristicas/' + str(t) + '/'
+    
+    path_ccs_ = path + '/caracteristicas_wkl/wkl_nuevasEEG_Zarjam/'
     
     ccs = pd.read_pickle(path_ccs + 'ccs.pkl')
     
-    ccs_eeg =  pd.read_pickle(path_ccs + 'ccs_wkl.pkl')
+    ccs_eeg =  pd.read_pickle(path_ccs_ + sujeto + '_ccsWkl.pkl')
     ccs_wkl = ccs.drop(['promPupila', 'varPupila'], axis = 1)
     ccs_wkl =  pd.concat([ccs_wkl, ccs_eeg], axis=1)
     path_etiqueta = path +'/sujetos/'+ sujeto + '/etiquetas-wklPupila_' + str(t) + '.pkl' 
     etiquetasWkl = pd.read_pickle(path_etiqueta)
-          
+    '''     
     resultados = []
     
-    #path_df = path + '/dosClustersWKL/' + sujeto + '_ccsEt.pkl'
-    #df = pd.read_pickle(path_df)
     
-    #etiquetas = df['etiquetas']
-    #caracteristicas = df.drop(['etiquetas'], axis = 1)
+  
+    path_df = path + '/dosClustersWKL/' + sujeto + '_ccsEt.pkl'
+    df = pd.read_pickle(path_df)
+    
+    etiquetas = df['etiquetas']
+    caracteristicas = df.drop(['etiquetas'], axis = 1)
 
-    etiquetas = etiquetasWkl
-    caracteristicas = ccs_wkl
+    #etiquetas = etiquetasWkl
+    #caracteristicas = ccs_wkl
     #path_ccsA = path +'/caracteristicas_ar/'+ str(t) + '/' 
     #path_ccsV = path +'/caracteristicas_val/'+ str(t) + '/' 
     #path_ccs = path+ '/señales_baseline/' + sujeto + '/caracteristicas/' + str(t) + '/'
@@ -99,8 +105,8 @@ for sujeto in participantes:
     #ccs_wkl['etiquetas'] = etiquetas_wkl
     #ccs_wkl =  pd.concat([ccs_wkl, ccs_eeg], axis=1)
        
-    ccs_arousal = ccs.drop(['gsrAcum', 'promGSR', 'powerGSR', 'maxFasica', 'numPeaksFasica', 'promFasica'], axis = 1)#eliminar GSR
-    ccs_valencia = ccs.drop(['promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin'], axis = 1) #eliminar HR, PPG y ECG 
+    #ccs_arousal = ccs.drop(['gsrAcum', 'promGSR', 'powerGSR', 'maxFasica', 'numPeaksFasica', 'promFasica'], axis = 1)#eliminar GSR
+    #ccs_valencia = ccs.drop(['promECG', 'medianaECG', 'ecgMAD', 'promHR', 'stdHR', 'rmsHR', 'AVNN', 'SDNN', 'rMSDD', 'ppgProm', 'ppgStd', 'ppgMediana', 'ppgMax', 'ppgMin'], axis = 1) #eliminar HR, PPG y ECG 
     
     #ccs_arousal = pd.concat([ccs_arousal, ccs_eegA], axis = 1)
     #ccs_valencia = pd.concat([ccs_valencia, ccs_eegV], axis = 1)
@@ -108,9 +114,9 @@ for sujeto in participantes:
 
     #path_etiquetas = path + '/clusters_todosWKL/' + str(t) 
     
-    caracteristicas = ccs_wkl #ccs_a, ccs_v
+    #caracteristicas = ccs_wkl #ccs_a, ccs_v
     #etiquetas = pd.read_pickle(path_etiquetas + '/' + sujeto + 'clusters.pkl') #_etiquetas-arousalGSR.pkl
-    etiquetas = etiquetasWkl
+    #etiquetas = etiquetasWkl
     
     caracteristicas.reset_index(drop = True, inplace = True) #tengan mismos indices - partan de 0 hasta len
     etiquetas.reset_index(drop = True, inplace = True)
@@ -144,8 +150,18 @@ for sujeto in participantes:
   
     caracteristicas = np.array(caracteristicas)
     etiquetas = etiquetas.values.ravel()
-
     
+    
+    clase1 = np.max(etiquetas)
+    clase2 = np.min(etiquetas)
+    
+    etiquetas_ = []
+    for etiqueta in etiquetas:
+        if etiqueta == clase1:
+            etiquetas_.append(1)
+        else:
+            etiquetas_.append(0)
+    etiquetas = np.array(etiquetas_)
     #KNN
     print('KNN')
     vecinos = [1, 3, 5, 10]
@@ -224,5 +240,5 @@ for sujeto in participantes:
     
 df_resultados = pd.DataFrame(matrix, columns = clmn)
 
-df_resultados.to_pickle(path_resultados + 'wkl_pupilaBien.pkl')
+df_resultados.to_pickle(path_resultados + 'wkl_pupilaBienDosClusters.pkl')
 #m = df_resultados.filter(like='_acc') seleccionar maximo y bla

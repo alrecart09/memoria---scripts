@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 #para mejores ventanas/Clasificadores - % clasificación por clase
 
-t =2
+t =5
 
 def get_infoClasificador(df, clasificador, nClases):
     df = df.filter(like=clasificador, axis = 1)
@@ -34,8 +34,8 @@ def getPorcentaje_Clases(df_datos, nMaxClases):
             continue
         df_acc = df_acc.mean()
         df_std = df_std.std()
-        #print(str(df_acc))
-        print(str(df_std*100))
+        print(str(df_acc*100))
+        #print(str(df_std*100))
         print('  ') 
         matriz[num:] =np.array(df_acc[1:])
         num+=1
@@ -75,8 +75,7 @@ else:
     wkl = pd.read_pickle(path_resultados + 'wkl_clasificadores_eegSeleccion.pkl')
 
 #wkl = pd.read_pickle( path + '/resultados/' + 'wkl_eegCcsZarjam.pkl')
-
-path_resultados = path + '/resultados/' + str(t) + '/'
+wkl = pd.read_pickle(path_resultados + 'wkl_pupilaBien.pkl')
 
    
 nClases_valencia = pd.read_pickle(path_resultados + 'nClases_valencia.pkl')

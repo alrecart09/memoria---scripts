@@ -15,7 +15,7 @@ import numpy as np
 
 path = os.path.dirname(os.path.realpath(__file__))
 
-t = 2
+t =2
 #participantes = fn.listaParticipantes()[0]
 participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
@@ -24,14 +24,14 @@ clases_original = []
 clases_final = []
 for sujeto in participantes:
     print('\x1b[1;45m' + str(sujeto) +'\x1b[0m')
-    path_ccs = path +'/sujetos/'+ sujeto + '/caracteristicas/' + str(t) +  '/' 
-    caracteristicas = pd.read_pickle(path_ccs + 'ccs.pkl')
+    path_ccs = path + '/caracteristicas_wkl/' + str(t) +  '/' 
+    caracteristicas = pd.read_pickle(path_ccs + sujeto + '_ccs.pkl')
     
     pupila = caracteristicas['promPupila']
     #path_etiquetas = path +'/clusters/'+ str(t) + '/'
-    path_etiquetas = path + '/sujetos/' + sujeto + '/'
+    path_etiquetas = path + '/clusters/wkl/' + str(t) + '/' + sujeto + '_etiquetas-wklPupila.pkl'
     #etiquetas = pd.read_pickle(path_etiquetas + sujeto + '_etiquetas-arousalGSR.pkl')
-    etiquetas = pd.read_pickle(path_etiquetas + 'etiquetas-wklPupila_' + str(t) + '.pkl')
+    etiquetas = pd.read_pickle(path_etiquetas)
     
     pupila.reset_index(inplace=True, drop = True)
     etiquetas.reset_index(inplace = True, drop = True)
@@ -58,7 +58,7 @@ for sujeto in participantes:
     print('numero final de clases: ' + str(len(final)))
     clases_final.append(len(final))
     
-
+    
     pupila_clase =[]
     for clase, cantidad in final.most_common():
         ind = np.where(pupEt['etiquetas'] == clase)[0]
@@ -70,6 +70,7 @@ for sujeto in participantes:
         
 '''   
 df = pd.DataFrame({'n_original': clases_original, 'n_final': clases_final})
+print(str(df.mean()) + ' y ' + str(df.std()))
 path_resultados = path + '/resultados/' + str(t) + '/'
 df.to_pickle(path_resultados + 'nClases_wkl.pkl')
 '''

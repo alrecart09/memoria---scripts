@@ -38,7 +38,7 @@ def get_metricas_Mejorclasificador(df, clasificador):
 #como le meto lo multiclase??
     
 #resultados clasificacion
-t =2
+t = 2
 path = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -79,8 +79,8 @@ else:
     valencia = valencia*100
     arousal = arousal*100
 
-wkl = pd.read_pickle(path + '/resultados/5/motivacion.pkl')
-wkl = wkl[0:50]
+
+wkl = pd.read_pickle(path + '/resultados/' +str(t) + '/wkl_pupilaBienDosClusters.pkl')
 #wkl = wkl*100
 val_prom = valencia.mean()
 ar_prom = arousal.mean()
@@ -88,7 +88,7 @@ wkl_prom = wkl.mean()
 
 #val_std = valencia.std()
 #ar_std = arousal.std()
-#wkl_std = wkl.std()
+wkl_std = wkl.std()
 
 val_knn, val_svm, val_ann = get_clasificador(val_prom)
 ar_knn, ar_svm, ar_ann = get_clasificador(ar_prom)

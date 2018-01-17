@@ -18,22 +18,21 @@ t = 2
 #participantes = fn.listaParticipantes()[0]
 participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
-clusters = [[0,1],[1,0],[0,1],[2,1],[1,0],[2,1],[0,5],[1,2],[1,0],[1,0],[2,1],[2,4], [1,0], [1,2], [2,4], [1,0]]
+clusters = [[2,5],[2,4],[0,1],[1,0],[2,5],[2,1],[0,5],[1,2],[1,0],[1,0],[2,1],[2,1], [2,5], [1,2], [2,0], [1,0]]
 
-
+nDatos = []
 num = 0         
 for sujeto in participantes:
-    path_nuevo = fn.makedir2(path , 'dosClustersWKL')
+    path_nuevo = fn.makedir2(path , 'dosClustersWKL/')
     
     print('\x1b[1;45m' + str(sujeto) +'\x1b[0m')
     
-    path_ccs = path +'/sujetos/'+ sujeto + '/caracteristicas/' + str(t) +  '/' 
-    caracteristicas = pd.read_pickle(path_ccs + 'ccs.pkl')
+    path_ccs = path +'/caracteristicas_wkl/'+ str(t) + '/' 
+    caracteristicas = pd.read_pickle(path_ccs + sujeto + '_ccs.pkl')
     
     #path_etiquetas = path +'/clusters/'+ str(t) + '/'
-    path_etiquetas = path + '/sujetos/' + sujeto + '/'
-    #etiquetas = pd.read_pickle(path_etiquetas + sujeto + '_etiquetas-arousalGSR.pkl')
-    etiquetas = pd.read_pickle(path_etiquetas + 'etiquetas-wklPupila_' + str(t) + '.pkl')
+    path_etiquetas =  path +'/clusters/wkl/'+ str(t) + '/'
+    etiquetas = pd.read_pickle(path_etiquetas + sujeto + '_etiquetas-wklPupila.pkl')
     
     ccs_eeg =  pd.read_pickle(path + '/caracteristicas_wkl/wkl_nuevasEEG_Zarjam/' + sujeto + '_ccsWkl.pkl')
     ccs_wkl = caracteristicas.drop(['promPupila', 'varPupila'], axis = 1)
@@ -57,8 +56,11 @@ for sujeto in participantes:
         print(str(clase1), str(clase2))
         df = df[(df['etiquetas'] == clase1) | (df['etiquetas'] == clase2)]
     
-    
+    nDatos.append(len(df))
     num+=1
     
     df.reset_index(inplace = True, drop = True)
     df.to_pickle(path_nuevo + sujeto + '_ccsEt.pkl')
+    
+nDatos_ = pd.DataFrame(nDatos)
+print('nDatos ' + str(nDatos_.mean()))

@@ -50,6 +50,7 @@ participantes = fn.listaParticipantes()[0]
 #participantes = ['manuela-diaz']
 participantes = ['alejandro-cuevas', 'camila-socias', 'emilio-urbano', 'felipe-silva', 'francisca-barrera', 'israfel-salazar', 'ivan-zimmermann', 'ivania-valenzuela', 'jaime-aranda', 'juan-zambrano', 'manuela-diaz', 'michelle-fredes', 'miguel-sanchez', 'ricardo-ramos', 'roberto-rojas', 'rodrigo-chi']
 
+participantes = ['felipe-silva']
 #path_clusters = fn.makedir2(path, 'clusters/' + str(t) )
 
 

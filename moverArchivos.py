@@ -12,7 +12,7 @@ import shutil
 #copiar ccs valencia y excitacion a carpeta general para pasar a otro PC
 
 path = os.path.dirname(os.path.realpath(__file__))
-t =5
+t = 2
 #participantes = fn.listaParticipantes()[0]
 
 path_nuevo_ccs = fn.makedir2(path, 'caracteristicas_wkl/' + str(t) + '/')
@@ -33,6 +33,6 @@ for sujeto in participantes:
     path_ccs_eeg = path_ccs + 'ccs_wkl.pkl'
 
     
-    shutil.copy(path_etiquetas, path_nuevo_clusters + sujeto +'_etiquetas-wklPupila')
+    shutil.copy(path_etiquetas, path_nuevo_clusters + sujeto +'_etiquetas-wklPupila.pkl')
     shutil.copy(path_ccs + 'ccs.pkl', path_nuevo_ccs + sujeto + '_ccs.pkl')
     shutil.copy(path_ccs_eeg, path_nuevo_ccs + sujeto + '_ccsEeg.pkl')
