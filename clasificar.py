@@ -162,6 +162,7 @@ for sujeto in participantes:
         else:
             etiquetas_.append(0)
     etiquetas = np.array(etiquetas_)
+    
     #KNN
     print('KNN')
     vecinos = [1, 3, 5, 10]
